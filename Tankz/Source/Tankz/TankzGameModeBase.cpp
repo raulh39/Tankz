@@ -11,6 +11,7 @@ void ATankzGameModeBase::BeginPlay()
 
 	GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("Tank Spawning"));
 	FTransform SpawnTransform;
+	SpawnTransform.SetTranslation(FVector(0.f, 0.f, 10.831337f));
 
 	GetWorld()->SpawnActor<ATank>(ATank::StaticClass(), SpawnTransform);
 }
