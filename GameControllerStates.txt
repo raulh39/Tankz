@@ -1,0 +1,15 @@
+struct GameControllerState {
+	virtual ~GameControllerState() = default;
+	virtual change() = 0;
+	virtual accept() = 0;
+	virtual move_front(float v) = 0;
+	virtual move_right(float v) = 0;
+	virtual reposition(float newX, float newY) = 0;
+}
+
+Derived:
+	SelectingTankForMovementState
+	PositioningArrowState
+	PositioningTankState
+	SelectingTankForFireState
+	SelectingTargetState
