@@ -19,6 +19,21 @@ ATank::ATank()
 		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("Mesh Asset not found"));
 	}
 
+	auto MaterialInstance = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("MaterialInstanceConstant'/Game/Materials/TankMaterialInstance.TankMaterialInstance'"));
+	if (MaterialInstance.Object != nullptr) {
+		MainTankBodyMesh->SetMaterial(0, MaterialInstance.Object);
+//		UMaterialInstanceDynamic* dynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance.Object, NULL, TEXT("TankMaterialInstance"));
+//		dynamicMaterialInstance->SetFlags(RF_Transient);
+//		if (dynamicMaterialInstance != nullptr) {
+//			MainTankBodyMesh->SetMaterial(0, dynamicMaterialInstance);
+//		} else {
+//			GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("dynamicMaterialInstance not created"));
+//		}
+	} else {
+		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("Material instance not found"));
+	}
+	
+
 	BorderPath = CreateDefaultSubobject<USplineComponent>("BorderPath");
 	BorderPath->AttachTo(MainTankBodyMesh);
 	FVector splinePointPosition1{ -24.f, 16.f, 0.f };
