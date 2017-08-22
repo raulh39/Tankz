@@ -21,11 +21,14 @@ ATank::ATank()
 
 	auto MaterialInstance = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("MaterialInstanceConstant'/Game/Materials/TankMaterialInstance.TankMaterialInstance'"));
 	if (MaterialInstance.Object != nullptr) {
-
-		UMaterialInstanceDynamic* DynMaterial = UMaterialInstanceDynamic::Create(MaterialInstance.Object, this);
-		FLinearColor LinearColor{ 0.05f, 0.05f,0.05f };
-		DynMaterial->SetVectorParameterValue("EmissiveColor", LinearColor);
-		MainTankBodyMesh->SetMaterial(0, DynMaterial);
+		MainTankBodyMesh->SetMaterial(0, MaterialInstance.Object);
+//		UMaterialInstanceDynamic* dynamicMaterialInstance = UMaterialInstanceDynamic::Create(MaterialInstance.Object, NULL, TEXT("TankMaterialInstance"));
+//		dynamicMaterialInstance->SetFlags(RF_Transient);
+//		if (dynamicMaterialInstance != nullptr) {
+//			MainTankBodyMesh->SetMaterial(0, dynamicMaterialInstance);
+//		} else {
+//			GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("dynamicMaterialInstance not created"));
+//		}
 	} else {
 		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("Material instance not found"));
 	}
