@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SplineComponent.h"
 #include "Tank.generated.h"
 
 UCLASS()
@@ -16,7 +17,10 @@ public:
 	ATank();
 
 	UPROPERTY()
-	UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* MainTankBodyMesh;
+
+	UPROPERTY()
+	USplineComponent* BorderPath;
 
 protected:
 	// Called when the game starts or when spawned
