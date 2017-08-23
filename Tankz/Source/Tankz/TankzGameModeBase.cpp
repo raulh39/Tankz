@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "TankzGameModeBase.h"
 #include "Paths.h"
 #include "Engine.h"

@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Tank.h"
 #include "ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
@@ -22,8 +20,7 @@ void ATank::CreateComponents() {
 	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(meshLocator);
 	if (MeshAsset.Object != nullptr) {
 		MainTankBodyMesh->SetStaticMesh(MeshAsset.Object);
-	}
-	else {
+	} else {
 		UE_LOG(LogTemp, Error, TEXT("Mesh Asset not found: %s"), meshLocator);
 	}
 
@@ -51,8 +48,7 @@ void ATank::CreateMaterials() {
 	if (MaterialInstance.Object != nullptr) {
 		TankMaterialInstance = MaterialInstance.Object;
 		MainTankBodyMesh->SetMaterial(0, TankMaterialInstance);
-	}
-	else {
+	} else {
 		UE_LOG(LogTemp, Error, TEXT("Material instance not found: %s"), matLocator);
 	}
 
@@ -80,8 +76,7 @@ void ATank::Tick(float DeltaTime)
 	if (incrementing) {
 		lastColor += DeltaTime;
 		if (lastColor > 1.f) incrementing = false;
-	}
-	else {
+	} else {
 		lastColor -= DeltaTime;
 		if (lastColor < 0.f) incrementing = true;
 	}
