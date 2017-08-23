@@ -32,6 +32,9 @@ protected:
 private:
 	float lastColor;
 	bool incrementing;
+	void CreateComponents();
+	void CreateMaterials();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

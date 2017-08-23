@@ -11,13 +11,20 @@ ATank::ATank() : lastColor{ 0.f }, incrementing{true}
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CreateComponents();
+	CreateMaterials();
+}
+
+void ATank::CreateComponents() {
 	MainTankBodyMesh = CreateDefaultSubobject<UStaticMeshComponent>("MainTankBodyMesh");
 	RootComponent = MainTankBodyMesh;
-	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/TankMesh.TankMesh'"));
+	auto meshLocator = TEXT("StaticMesh'/Game/Meshes/TankMesh.TankMesh'");
+	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(meshLocator);
 	if (MeshAsset.Object != nullptr) {
 		MainTankBodyMesh->SetStaticMesh(MeshAsset.Object);
-	} else {
-		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("Mesh Asset not found"));
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Mesh Asset not found: %s"), meshLocator);
 	}
 
 	BorderPath = CreateDefaultSubobject<USplineComponent>("BorderPath");
@@ -36,18 +43,22 @@ ATank::ATank() : lastColor{ 0.f }, incrementing{true}
 	BorderPath->AddSplineLocalPoint(splinePointPosition4);
 	BorderPath->SetSplinePointType(3, ESplinePointType::Linear, false);
 	BorderPath->SetClosedLoop(true);
+}
 
-	auto MaterialInstance = ConstructorHelpers::FObjectFinder<UMaterialInterface>(TEXT("MaterialInstanceConstant'/Game/Materials/TankMaterialInstance.TankMaterialInstance'"));
+void ATank::CreateMaterials() {
+	auto matLocator = TEXT("MaterialInstanceConstant'/Game/Materials/TankMaterialInstance.TankMaterialInstance'");
+	auto MaterialInstance = ConstructorHelpers::FObjectFinder<UMaterialInterface>(matLocator);
 	if (MaterialInstance.Object != nullptr) {
 		TankMaterialInstance = MaterialInstance.Object;
 		MainTankBodyMesh->SetMaterial(0, TankMaterialInstance);
-	} else {
-		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("Material instance not found"));
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Material instance not found: %s"), matLocator);
 	}
 
 	auto MainTankBodyMaterialDynamicInstance = MainTankBodyMesh->CreateDynamicMaterialInstance(0);
 	if (!MainTankBodyMaterialDynamicInstance) {
-		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("dynamicMaterialInstance not created"));
+		UE_LOG(LogTemp, Error, TEXT("MainTankBodyMaterialDynamicInstance not created"));
 	}
 }
 
@@ -77,4 +88,3 @@ void ATank::Tick(float DeltaTime)
 	FLinearColor newColor{ lastColor, lastColor, lastColor };
 	MainTankBodyMaterialDynamicInstance->SetVectorParameterValue(TEXT("EmissiveColor"), newColor);
 }
-
