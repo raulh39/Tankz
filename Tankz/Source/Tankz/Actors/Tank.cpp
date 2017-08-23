@@ -4,10 +4,9 @@
 #include "Engine.h"
 
 // Sets default values
-ATank::ATank() : lastColor{ 0.f }, incrementing{true}
+ATank::ATank() : isSelected{true}
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CreateComponents();
 	CreateMaterials();
@@ -68,18 +67,20 @@ void ATank::BeginPlay()
 void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ATank::toggleSelected()
+{
+	isSelected = !isSelected;
 
 	UMaterialInterface* MaterialInstance = MainTankBodyMesh->GetMaterial(0);
 	UMaterialInstanceDynamic* MainTankBodyMaterialDynamicInstance = Cast<UMaterialInstanceDynamic>(MaterialInstance);
-	if (!MainTankBodyMaterialDynamicInstance) return;
-
-	if (incrementing) {
-		lastColor += DeltaTime;
-		if (lastColor > 1.f) incrementing = false;
-	} else {
-		lastColor -= DeltaTime;
-		if (lastColor < 0.f) incrementing = true;
+	if (!MainTankBodyMaterialDynamicInstance) {
+		UE_LOG(LogTemp, Error, TEXT("MainTankBodyMaterial is not instance dynamic!"));
+		return;
 	}
-	FLinearColor newColor{ lastColor, lastColor, lastColor };
-	MainTankBodyMaterialDynamicInstance->SetVectorParameterValue(TEXT("EmissiveColor"), newColor);
+	float newColor{0};
+	if(isSelected) newColor=0.05;
+	FLinearColor newColorC{ newColor, newColor, newColor };
+	MainTankBodyMaterialDynamicInstance->SetVectorParameterValue(TEXT("EmissiveColor"), newColorC);
 }

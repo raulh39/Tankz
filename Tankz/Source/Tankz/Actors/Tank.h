@@ -23,13 +23,17 @@ public:
 	UPROPERTY()
 	UMaterialInterface* TankMaterialInstance;
 
+	UPROPERTY()
+	bool isSelected;
+
+	UFUNCTION()
+	void toggleSelected();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
-	float lastColor;
-	bool incrementing;
 	void CreateComponents();
 	void CreateMaterials();
 
