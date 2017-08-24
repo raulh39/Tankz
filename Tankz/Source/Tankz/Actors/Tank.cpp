@@ -45,13 +45,12 @@ void ATank::CreateMaterials() {
 	auto matLocator = TEXT("MaterialInstanceConstant'/Game/Materials/TankMaterialInstance.TankMaterialInstance'");
 	auto MaterialInstance = ConstructorHelpers::FObjectFinder<UMaterialInterface>(matLocator);
 	if (MaterialInstance.Object != nullptr) {
-		TankMaterialInstance = MaterialInstance.Object;
-		MainTankBodyMesh->SetMaterial(0, TankMaterialInstance);
+		MainTankBodyMesh->SetMaterial(0, MaterialInstance.Object);
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("Material instance not found: %s"), matLocator);
 	}
 
-	auto MainTankBodyMaterialDynamicInstance = MainTankBodyMesh->CreateDynamicMaterialInstance(0);
+	MainTankBodyMaterialDynamicInstance = MainTankBodyMesh->CreateDynamicMaterialInstance(0);
 	if (!MainTankBodyMaterialDynamicInstance) {
 		UE_LOG(LogTemp, Error, TEXT("MainTankBodyMaterialDynamicInstance not created"));
 	}
@@ -73,8 +72,6 @@ void ATank::toggleSelected()
 {
 	isSelected = !isSelected;
 
-	UMaterialInterface* MaterialInstance = MainTankBodyMesh->GetMaterial(0);
-	UMaterialInstanceDynamic* MainTankBodyMaterialDynamicInstance = Cast<UMaterialInstanceDynamic>(MaterialInstance);
 	if (!MainTankBodyMaterialDynamicInstance) {
 		UE_LOG(LogTemp, Error, TEXT("MainTankBodyMaterial is not instance dynamic!"));
 		return;

@@ -21,7 +21,7 @@ public:
 	USplineComponent* BorderPath;
 
 	UPROPERTY()
-	UMaterialInterface* TankMaterialInstance;
+	UMaterialInstanceDynamic* MainTankBodyMaterialDynamicInstance;
 
 	UPROPERTY()
 	bool isSelected;

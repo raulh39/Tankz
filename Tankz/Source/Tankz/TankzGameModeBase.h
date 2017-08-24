@@ -13,4 +13,6 @@ class TANKZ_API ATankzGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	virtual void BeginPlay() override;
+private:
+	void LoadJson();
 };
