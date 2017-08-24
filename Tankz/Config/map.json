@@ -1,3 +1,41 @@
 {
-	"version":"1.0"
+	"version":"1.0",
+	"map": {},
+	"attacker": [
+		{
+			"name": "Panzer IV (1)",
+			"mesh": "panzer",
+			"initiative": 5,
+			"attack": 4,
+			"defence": 1,
+			"damage capacity": 5,
+			"habilities": [ "Blitzkrieg" ],
+			"position": [0, 0],
+			"rotation": 0
+		},
+		{
+			"name": "Panzer IV (2)",
+			"mesh": "panzer",
+			"initiative": 5,
+			"attack": 4,
+			"defence": 1,
+			"damage capacity": 5,
+			"habilities": [ "Blitzkrieg" ],
+			"position": [80, 80],
+			"rotation": 0
+		},
+		{
+			"name": "Panzer IV (3)",
+			"mesh": "panzer",
+			"initiative": 5,
+			"attack": 4,
+			"defence": 1,
+			"damage capacity": 5,
+			"habilities": [ "Blitzkrieg" ],
+			"position": [80, 80],
+			"rotation": 0
+		}
+	],
+	"defender": [
+	]
 }

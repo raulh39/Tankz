@@ -2,6 +2,8 @@
 #include "Paths.h"
 #include "Engine.h"
 #include "Actors/Tank.h"
+#include "Data/TankData.h"
+#include "JsonObjectConverter.h"
 
 void ATankzGameModeBase::BeginPlay()
 {
@@ -25,15 +27,24 @@ void ATankzGameModeBase::LoadJson()
 	const FString fileName = FPaths::Combine(FPaths::GameConfigDir(), TEXT("map.json"));
 	UE_LOG(LogTemp, Log, TEXT("fileName: %s"),*fileName);
 	FFileHelper::LoadFileToString(JsonString, *fileName);
-	UE_LOG(LogTemp, Log, TEXT("JsonString: %s"),*JsonString);
 
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
 	if (!FJsonSerializer::Deserialize(Reader, JsonObject)) {
-		UE_LOG(LogTemp, Error, TEXT("Error loading map.json"));
+		UE_LOG(LogTemp, Error, TEXT("Error loading map.json:\n%s"), *JsonString);
 		return;
 	}
 
-	auto version = JsonObject->GetStringField("version");
+	auto version = JsonObject->GetStringField(TEXT("version"));
 	UE_LOG(LogTemp, Log, TEXT("version: %s"),*version);
+
+	auto attacker = JsonObject->GetArrayField(TEXT("attacker"));
+	auto first = attacker[0].Get()->AsObject();
+
+	FTankData TankData;
+	FString JsonStr{TEXT("{\"name\": \"Panzer IV (1)\", \"mesh\": \"panzer\", \"initiative\": 5, \"attack\": 4, \"defence\": 1, \"damage capacity\": 5, \"habilities\": [ \"Blitzkrieg\" ], \"position\": [0, 0], \"rotation\": 0 }")};
+
+	FJsonObjectConverter::JsonObjectStringToUStruct<FTankData>(JsonStr, &TankData, 0, 0);
+
+	UE_LOG(LogTemp, Log, TEXT("First attacker name: %s"),*(TankData.name));
 }
