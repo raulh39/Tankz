@@ -8,9 +8,10 @@
 			"initiative": 5,
 			"attack": 4,
 			"defence": 1,
-			"damage capacity": 5,
+			"damage_capacity": 5,
 			"habilities": [ "Blitzkrieg" ],
-			"position": [0, 0],
+			"position_x": 0,
+			"position_y": 0,
 			"rotation": 0
 		},
 		{
@@ -19,10 +20,11 @@
 			"initiative": 5,
 			"attack": 4,
 			"defence": 1,
-			"damage capacity": 5,
+			"damage_capacity": 5,
 			"habilities": [ "Blitzkrieg" ],
-			"position": [80, 80],
-			"rotation": 0
+			"position_x": 80,
+			"position_y": 80,
+			"rotation": 45
 		},
 		{
 			"name": "Panzer IV (3)",
@@ -30,10 +32,11 @@
 			"initiative": 5,
 			"attack": 4,
 			"defence": 1,
-			"damage capacity": 5,
+			"damage_capacity": 5,
 			"habilities": [ "Blitzkrieg" ],
-			"position": [80, 80],
-			"rotation": 0
+			"position_x": 160,
+			"position_y": 160,
+			"rotation": 90
 		}
 	],
 	"defender": [

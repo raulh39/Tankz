@@ -42,9 +42,9 @@ void ATankzGameModeBase::LoadJson()
 	auto first = attacker[0].Get()->AsObject();
 
 	FTankData TankData;
-	FString JsonStr{TEXT("{\"name\": \"Panzer IV (1)\", \"mesh\": \"panzer\", \"initiative\": 5, \"attack\": 4, \"defence\": 1, \"damage capacity\": 5, \"habilities\": [ \"Blitzkrieg\" ], \"position\": [0, 0], \"rotation\": 0 }")};
+	FString JsonStr{TEXT("{\"name\": \"Panzer IV (1)\", \"mesh\": \"panzer\", \"initiative\": 5, \"attack\": 4, \"defence\": 1, \"damage_capacity\": 5, \"habilities\": [ \"Blitzkrieg\" ], \"position_x\": 0, \"position_y\": 0, \"rotation\": 0 }")};
 
 	FJsonObjectConverter::JsonObjectStringToUStruct<FTankData>(JsonStr, &TankData, 0, 0);
-
-	UE_LOG(LogTemp, Log, TEXT("First attacker name: %s"),*(TankData.name));
+	
+	UE_LOG(LogTemp, Log, TEXT("TankData: %s"),*(TankData.ToString()));
 }
