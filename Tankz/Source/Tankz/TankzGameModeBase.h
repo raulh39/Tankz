@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Data/TankzMapData.h"
+
 #include "TankzGameModeBase.generated.h"
 
 /**
@@ -14,5 +16,5 @@ class TANKZ_API ATankzGameModeBase : public AGameModeBase
 public:
 	virtual void BeginPlay() override;
 private:
-	void LoadJson();
+	FTankzMapData LoadJson();
 };

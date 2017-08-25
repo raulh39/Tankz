@@ -2,26 +2,26 @@
 #include "Paths.h"
 #include "Engine.h"
 #include "Actors/Tank.h"
-#include "Data/TankzMapData.h"
 #include "JsonObjectConverter.h"
 
 void ATankzGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	LoadJson();
+	FTankzMapData TankzMapData = LoadJson();
 
-	GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, TEXT("Tank Spawning"));
-	FTransform SpawnTransform;
+	for(auto tank: TankzMapData.attacker) {
+		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, FString::Printf(TEXT("Tank '%s' spawning"), *tank.name));
+		FTransform SpawnTransform;
 
-	SpawnTransform.SetTranslation(FVector(0.f, 0.f, 10.831337f));
-	GetWorld()->SpawnActor<ATank>(ATank::StaticClass(), SpawnTransform);
-
-	SpawnTransform.SetTranslation(FVector(80.f, 80.f, 10.831337f));
-	GetWorld()->SpawnActor<ATank>(ATank::StaticClass(), SpawnTransform);
+		SpawnTransform.SetTranslation(FVector(tank.position_x, tank.position_y, 10.831337f));
+		FVector Axis{0,0,1};
+		SpawnTransform.SetRotation(FQuat(Axis, tank.rotation*PI/180));
+		GetWorld()->SpawnActor<ATank>(ATank::StaticClass(), SpawnTransform);
+	}
 }
 
-void ATankzGameModeBase::LoadJson()
+FTankzMapData ATankzGameModeBase::LoadJson()
 {
 	FTankzMapData TankzMapData;
 
@@ -39,4 +39,6 @@ void ATankzGameModeBase::LoadJson()
 		FJsonObjectConverter::UStructToJsonObjectString<FTankzMapData>(TankzMapData,OutJsonString);
 		UE_LOG(LogTemp, Log, TEXT("TankzMapData: %s"),*(OutJsonString));
 	}
+
+	return TankzMapData;
 }
