@@ -23,14 +23,20 @@ void ATankzGameModeBase::BeginPlay()
 
 void ATankzGameModeBase::LoadJson()
 {
-	FString JsonString;
-	const FString fileName = FPaths::Combine(FPaths::GameConfigDir(), TEXT("map.json"));
-	UE_LOG(LogTemp, Log, TEXT("fileName: %s"),*fileName);
-	FFileHelper::LoadFileToString(JsonString, *fileName);
-
 	FTankzMapData TankzMapData;
 
-	FJsonObjectConverter::JsonObjectStringToUStruct<FTankzMapData>(JsonString, &TankzMapData, 0, 0);
-	
-	UE_LOG(LogTemp, Log, TEXT("TankzMapData: %s"),*(TankzMapData.ToString()));
+	{
+		FString JsonString;
+		const FString fileName = FPaths::Combine(FPaths::GameConfigDir(), TEXT("map.json"));
+		UE_LOG(LogTemp, Log, TEXT("fileName: %s"),*fileName);
+		FFileHelper::LoadFileToString(JsonString, *fileName);
+
+		FJsonObjectConverter::JsonObjectStringToUStruct<FTankzMapData>(JsonString, &TankzMapData, 0, 0);
+	}
+
+	{
+		FString OutJsonString;
+		FJsonObjectConverter::UStructToJsonObjectString<FTankzMapData>(TankzMapData,OutJsonString);
+		UE_LOG(LogTemp, Log, TEXT("TankzMapData: %s"),*(OutJsonString));
+	}
 }
