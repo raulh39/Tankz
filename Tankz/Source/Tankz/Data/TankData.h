@@ -25,7 +25,7 @@ public:
 		for(auto hab: habilities) {
 			habList += hab + TEXT(", ");
 		}
-		habList = habList.LeftChop(2);
+		if(habList.Len() > 2) habList = habList.LeftChop(2);
 		habList += TEXT("]");
 
 		return FString::Printf(
