@@ -10,9 +10,9 @@
 			"defence": 1,
 			"damage_capacity": 5,
 			"habilities": [ "Blitzkrieg" ],
-			"position_x": 0,
+			"position_x": 410,
 			"position_y": 0,
-			"rotation": 0
+			"rotation": 180
 		},
 		{
 			"name": "Panzer IV (2)",
@@ -22,9 +22,9 @@
 			"defence": 1,
 			"damage_capacity": 5,
 			"habilities": [ "Blitzkrieg" ],
-			"position_x": 80,
+			"position_x": 410,
 			"position_y": 80,
-			"rotation": 45
+			"rotation": 180
 		},
 		{
 			"name": "Panzer IV (3)",
@@ -34,11 +34,59 @@
 			"defence": 1,
 			"damage_capacity": 5,
 			"habilities": [ "Blitzkrieg" ],
-			"position_x": 160,
+			"position_x": 410,
 			"position_y": 160,
-			"rotation": 90
+			"rotation": 180
 		}
 	],
 	"defender": [
+		{
+			"name": "Sherman (76mm) 1",
+			"mesh": "sherman",
+			"initiative": 6,
+			"attack": 5,
+			"defence": 1,
+			"damage_capacity": 6,
+			"habilities": [ "Gung Hoo" ],
+			"position_x": -390,
+			"position_y": -150,
+			"rotation": 0
+		},
+		{
+			"name": "Sherman (76mm) 2",
+			"mesh": "sherman",
+			"initiative": 6,
+			"attack": 5,
+			"defence": 1,
+			"damage_capacity": 6,
+			"habilities": [ "Gung Hoo" ],
+			"position_x": -390,
+			"position_y": -100,
+			"rotation": 0
+		},
+		{
+			"name": "Sherman (76mm) 3",
+			"mesh": "sherman",
+			"initiative": 6,
+			"attack": 5,
+			"defence": 1,
+			"damage_capacity": 6,
+			"habilities": [ "Gung Hoo" ],
+			"position_x": -390,
+			"position_y": -50,
+			"rotation": 0
+		},
+		{
+			"name": "Sherman (75mm) 1",
+			"mesh": "sherman",
+			"initiative": 6,
+			"attack": 4,
+			"defence": 1,
+			"damage_capacity": 6,
+			"habilities": [ "Gung Hoo" ],
+			"position_x": -390,
+			"position_y": -0,
+			"rotation": 0
+		}
 	]
 }

@@ -17,4 +17,5 @@ public:
 	virtual void BeginPlay() override;
 private:
 	FTankzMapData LoadJson();
+	void Spawn(FTankData tank, bool isAttacker);
 };

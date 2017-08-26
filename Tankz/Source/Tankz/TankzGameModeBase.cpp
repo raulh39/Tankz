@@ -11,14 +11,25 @@ void ATankzGameModeBase::BeginPlay()
 	FTankzMapData TankzMapData = LoadJson();
 
 	for(auto tank: TankzMapData.attacker) {
+		Spawn(tank, true);
+	}
+	for(auto tank: TankzMapData.defender) {
+		Spawn(tank, false);
+	}
+}
+
+void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker) {
 		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, FString::Printf(TEXT("Tank '%s' spawning"), *tank.name));
 		FTransform SpawnTransform;
 
 		SpawnTransform.SetTranslation(FVector(tank.position_x, tank.position_y, 10.831337f));
 		FVector Axis{0,0,1};
 		SpawnTransform.SetRotation(FQuat(Axis, tank.rotation*PI/180));
-		GetWorld()->SpawnActor<ATank>(ATank::StaticClass(), SpawnTransform);
-	}
+		auto newTank = GetWorld()->SpawnActor<ATank>(ATank::StaticClass(), SpawnTransform);
+		if(isAttacker)
+			newTank->SetBaseColor(FLinearColor{.5,.05,.05});
+		else
+			newTank->SetBaseColor(FLinearColor{.05,.05,.5});
 }
 
 FTankzMapData ATankzGameModeBase::LoadJson()

@@ -29,6 +29,9 @@ public:
 	UFUNCTION()
 	void toggleSelected();
 
+	UFUNCTION()
+	void SetBaseColor(FLinearColor newBaseColor);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

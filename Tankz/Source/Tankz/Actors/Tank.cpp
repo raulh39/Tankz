@@ -53,7 +53,16 @@ void ATank::CreateMaterials() {
 	MainTankBodyMaterialDynamicInstance = MainTankBodyMesh->CreateDynamicMaterialInstance(0);
 	if (!MainTankBodyMaterialDynamicInstance) {
 		UE_LOG(LogTemp, Error, TEXT("MainTankBodyMaterialDynamicInstance not created"));
+		return;
 	}
+}
+
+void ATank::SetBaseColor(FLinearColor newBaseColor) {
+	if (!MainTankBodyMaterialDynamicInstance) {
+		UE_LOG(LogTemp, Error, TEXT("MainTankBodyMaterial is not instance dynamic!"));
+		return;
+	}
+	MainTankBodyMaterialDynamicInstance->SetVectorParameterValue(TEXT("BaseColor"), newBaseColor);
 }
 
 // Called when the game starts or when spawned
