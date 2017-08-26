@@ -4,7 +4,7 @@
 	"attacker": [
 		{
 			"name": "Panzer IV (1)",
-			"mesh": "panzer",
+			"mesh": "Panzer",
 			"initiative": 5,
 			"attack": 4,
 			"defence": 1,
@@ -16,7 +16,7 @@
 		},
 		{
 			"name": "Panzer IV (2)",
-			"mesh": "panzer",
+			"mesh": "Panzer",
 			"initiative": 5,
 			"attack": 4,
 			"defence": 1,
@@ -28,7 +28,7 @@
 		},
 		{
 			"name": "Panzer IV (3)",
-			"mesh": "panzer",
+			"mesh": "Panzer",
 			"initiative": 5,
 			"attack": 4,
 			"defence": 1,
@@ -42,7 +42,7 @@
 	"defender": [
 		{
 			"name": "Sherman (76mm) 1",
-			"mesh": "sherman",
+			"mesh": "Sherman",
 			"initiative": 6,
 			"attack": 5,
 			"defence": 1,
@@ -54,7 +54,7 @@
 		},
 		{
 			"name": "Sherman (76mm) 2",
-			"mesh": "sherman",
+			"mesh": "Sherman",
 			"initiative": 6,
 			"attack": 5,
 			"defence": 1,
@@ -66,7 +66,7 @@
 		},
 		{
 			"name": "Sherman (76mm) 3",
-			"mesh": "sherman",
+			"mesh": "Sherman",
 			"initiative": 6,
 			"attack": 5,
 			"defence": 1,
@@ -78,7 +78,7 @@
 		},
 		{
 			"name": "Sherman (75mm) 1",
-			"mesh": "sherman",
+			"mesh": "Sherman",
 			"initiative": 6,
 			"attack": 4,
 			"defence": 1,
