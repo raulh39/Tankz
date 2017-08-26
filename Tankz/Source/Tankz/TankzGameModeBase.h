@@ -20,6 +20,9 @@ public:
 	UPROPERTY()
 	UStaticMesh * TankMesh;
 
+	UPROPERTY()
+	UStaticMesh * ShermanMesh;
+	
 private:
 	FTankzMapData LoadJson();
 	void Spawn(FTankData tank, bool isAttacker);

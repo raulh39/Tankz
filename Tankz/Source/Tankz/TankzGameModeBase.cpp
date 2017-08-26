@@ -5,12 +5,23 @@
 #include "JsonObjectConverter.h"
 
 ATankzGameModeBase::ATankzGameModeBase() {
-	auto meshLocator = TEXT("StaticMesh'/Game/Meshes/TankMesh.TankMesh'");
-	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(meshLocator);
-	if (MeshAsset.Object == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("Mesh Asset not found: %s"), meshLocator);
+	{
+		auto panzerMeshLocator = TEXT("StaticMesh'/Game/Meshes/TankMesh.TankMesh'");
+
+		auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(panzerMeshLocator);
+		if (MeshAsset.Object == nullptr) {
+			UE_LOG(LogTemp, Error, TEXT("Mesh Asset not found: %s"), panzerMeshLocator);
+		}
+		TankMesh = MeshAsset.Object;
 	}
-	TankMesh = MeshAsset.Object;
+	{
+		auto shermanMeshLocator = TEXT("StaticMesh'/Game/Meshes/M4Sherman.M4Sherman'");
+		auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(shermanMeshLocator);
+		if (MeshAsset.Object == nullptr) {
+			UE_LOG(LogTemp, Error, TEXT("Mesh Asset not found: %s"), shermanMeshLocator);
+		}
+		ShermanMesh = MeshAsset.Object;
+	}
 
 	auto matLocator = TEXT("MaterialInstanceConstant'/Game/Materials/TankMaterialInstance.TankMaterialInstance'");
 	auto MaterialInstance = ConstructorHelpers::FObjectFinder<UMaterialInterface>(matLocator);
@@ -36,17 +47,21 @@ void ATankzGameModeBase::BeginPlay()
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker) {
 		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, FString::Printf(TEXT("Tank '%s' spawning"), *tank.name));
 
-		FVector translation{float(tank.position_x), float(tank.position_y), 10.831337f};
+		float zpos = 0.11259f;
+		if(isAttacker) zpos = 10.831337f;
+		FVector translation{float(tank.position_x), float(tank.position_y), zpos};
 		FVector Axis{0,0,1};
 		FRotator rotation{FQuat(Axis, tank.rotation*PI/180)};
 
 		auto newTank = GetWorld()->SpawnActor<ATank>(translation, rotation);
-		newTank->SetTankMesh(TankMesh);
 		
-		if(isAttacker)
+		if(isAttacker) {
+			newTank->SetTankMesh(TankMesh);
 			newTank->SetBaseColor(FLinearColor{.5,.05,.05});
-		else
+		} else {
+			newTank->SetTankMesh(ShermanMesh);
 			newTank->SetBaseColor(FLinearColor{.05,.05,.5});
+		}
 }
 
 FTankzMapData ATankzGameModeBase::LoadJson()
