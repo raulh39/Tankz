@@ -31,6 +31,9 @@ public:
 
 	UFUNCTION()
 	void SetBaseColor(FLinearColor newBaseColor);
+	
+	UFUNCTION()
+	void SetTankMesh(UStaticMesh* NewMesh);
 
 protected:
 	// Called when the game starts or when spawned

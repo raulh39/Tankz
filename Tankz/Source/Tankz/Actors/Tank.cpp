@@ -15,13 +15,6 @@ ATank::ATank() : isSelected{true}
 void ATank::CreateComponents() {
 	MainTankBodyMesh = CreateDefaultSubobject<UStaticMeshComponent>("MainTankBodyMesh");
 	RootComponent = MainTankBodyMesh;
-	auto meshLocator = TEXT("StaticMesh'/Game/Meshes/TankMesh.TankMesh'");
-	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(meshLocator);
-	if (MeshAsset.Object != nullptr) {
-		MainTankBodyMesh->SetStaticMesh(MeshAsset.Object);
-	} else {
-		UE_LOG(LogTemp, Error, TEXT("Mesh Asset not found: %s"), meshLocator);
-	}
 
 	BorderPath = CreateDefaultSubobject<USplineComponent>("BorderPath");
 	BorderPath->AttachToComponent(MainTankBodyMesh, FAttachmentTransformRules::SnapToTargetIncludingScale);
@@ -57,24 +50,17 @@ void ATank::CreateMaterials() {
 	}
 }
 
+void ATank::SetTankMesh(UStaticMesh* NewMesh) {
+	if(MainTankBodyMesh && NewMesh)
+		MainTankBodyMesh->SetStaticMesh(NewMesh);
+}
+
 void ATank::SetBaseColor(FLinearColor newBaseColor) {
 	if (!MainTankBodyMaterialDynamicInstance) {
 		UE_LOG(LogTemp, Error, TEXT("MainTankBodyMaterial is not instance dynamic!"));
 		return;
 	}
 	MainTankBodyMaterialDynamicInstance->SetVectorParameterValue(TEXT("BaseColor"), newBaseColor);
-}
-
-// Called when the game starts or when spawned
-void ATank::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-void ATank::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void ATank::toggleSelected()
@@ -89,4 +75,16 @@ void ATank::toggleSelected()
 	if(isSelected) newColor=0.05;
 	FLinearColor newColorC{ newColor, newColor, newColor };
 	MainTankBodyMaterialDynamicInstance->SetVectorParameterValue(TEXT("EmissiveColor"), newColorC);
+}
+
+// Called when the game starts or when spawned
+void ATank::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+// Called every frame
+void ATank::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }

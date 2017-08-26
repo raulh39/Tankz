@@ -4,6 +4,21 @@
 #include "Actors/Tank.h"
 #include "JsonObjectConverter.h"
 
+ATankzGameModeBase::ATankzGameModeBase() {
+	auto meshLocator = TEXT("StaticMesh'/Game/Meshes/TankMesh.TankMesh'");
+	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(meshLocator);
+	if (MeshAsset.Object == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("Mesh Asset not found: %s"), meshLocator);
+	}
+	TankMesh = MeshAsset.Object;
+
+	auto matLocator = TEXT("MaterialInstanceConstant'/Game/Materials/TankMaterialInstance.TankMaterialInstance'");
+	auto MaterialInstance = ConstructorHelpers::FObjectFinder<UMaterialInterface>(matLocator);
+	if (MaterialInstance.Object == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("Material Asset not found: %s"), matLocator);
+	}
+}
+
 void ATankzGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -20,12 +35,14 @@ void ATankzGameModeBase::BeginPlay()
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker) {
 		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, FString::Printf(TEXT("Tank '%s' spawning"), *tank.name));
-		FTransform SpawnTransform;
 
-		SpawnTransform.SetTranslation(FVector(tank.position_x, tank.position_y, 10.831337f));
+		FVector translation{float(tank.position_x), float(tank.position_y), 10.831337f};
 		FVector Axis{0,0,1};
-		SpawnTransform.SetRotation(FQuat(Axis, tank.rotation*PI/180));
-		auto newTank = GetWorld()->SpawnActor<ATank>(ATank::StaticClass(), SpawnTransform);
+		FRotator rotation{FQuat(Axis, tank.rotation*PI/180)};
+
+		auto newTank = GetWorld()->SpawnActor<ATank>(translation, rotation);
+		newTank->SetTankMesh(TankMesh);
+		
 		if(isAttacker)
 			newTank->SetBaseColor(FLinearColor{.5,.05,.05});
 		else

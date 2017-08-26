@@ -14,7 +14,12 @@ class TANKZ_API ATankzGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 public:
+	ATankzGameModeBase();
 	virtual void BeginPlay() override;
+
+	UPROPERTY()
+	UStaticMesh * TankMesh;
+
 private:
 	FTankzMapData LoadJson();
 	void Spawn(FTankData tank, bool isAttacker);
