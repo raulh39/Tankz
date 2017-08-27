@@ -42,7 +42,7 @@ void ATankzGameModeBase::BeginPlay()
 		FVector Axis{0,0,1};
 		FRotator rotation{FQuat(Axis, 45*PI/180)};
 
-		ATankBase* myTest = GetWorld()->SpawnActor<ATankBase>(TankClassTest, translation, rotation);
+		ATankBase* myTest = GetWorld()->SpawnActor<ATankBase>(TankTypes[0].Blueprint, translation, rotation);
 		myTest->SetSelected(true);
 	}
 

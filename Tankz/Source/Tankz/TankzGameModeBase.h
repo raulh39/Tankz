@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Data/TankzMapData.h"
-#include "Actors/TankBase.h"
+#include "Data/TankTypeData.h"
 #include "TankzGameModeBase.generated.h"
 
 /**
@@ -24,7 +24,7 @@ public:
 	UStaticMesh * ShermanMesh;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ATankBase> TankClassTest;
+	TArray<FTankTypeData> TankTypes;
 	
 private:
 
