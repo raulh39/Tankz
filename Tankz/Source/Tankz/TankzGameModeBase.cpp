@@ -34,11 +34,11 @@ void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker) {
 
 		ATankBase* newTank = GetWorld()->SpawnActor<ATankBase>(TankTypes[index].Blueprint, translation, rotation);
 		
-		//if(isAttacker) {
-		//	newTank->SetBaseColor(FLinearColor{.5,.05,.05});
-		//} else {
-		//	newTank->SetBaseColor(FLinearColor{.05,.05,.5});
-		//}
+		if(isAttacker) {
+			newTank->SetBaseColor(FLinearColor{.5,.05,.05});
+		} else {
+			newTank->SetBaseColor(FLinearColor{.05,.05,.5});
+		}
 }
 
 FTankzMapData ATankzGameModeBase::LoadJson()

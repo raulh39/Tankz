@@ -15,8 +15,11 @@ public:
 	// Sets default values for this actor's properties
 	ATankBase();
 	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "ZZZ")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tankz")
 	void SetSelected(bool isSelected);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tankz")
+	void SetBaseColor(FLinearColor newBaseColor);
 
 protected:
 	// Called when the game starts or when spawned

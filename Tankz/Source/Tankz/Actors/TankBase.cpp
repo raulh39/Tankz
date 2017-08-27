@@ -27,5 +27,10 @@ void ATankBase::Tick(float DeltaTime)
 
 void ATankBase::SetSelected_Implementation(bool isSelected)
 {
-	UE_LOG(LogTemp, Error, TEXT("SetSelected_Implementation"));
+	UE_LOG(LogTemp, Error, TEXT("SetSelected_Implementation called. The BP should have overrided this."));
+}
+
+void ATankBase::SetBaseColor_Implementation(FLinearColor newBaseColor)
+{
+	UE_LOG(LogTemp, Error, TEXT("SetBaseColor_Implementation. The BP should have overrided this."));
 }
