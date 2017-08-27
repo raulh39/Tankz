@@ -31,7 +31,9 @@ void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker) {
 		FVector Axis{0,0,1};
 		FRotator rotation{FQuat(Axis, tank.rotation*PI/180)};
 
-		ATankBase* newTank = GetWorld()->SpawnActor<ATankBase>(TankTypes[0].Blueprint, translation, rotation);
+		int index = FindIndexFor(tank.mesh);
+
+		ATankBase* newTank = GetWorld()->SpawnActor<ATankBase>(TankTypes[index].Blueprint, translation, rotation);
 		
 		//if(isAttacker) {
 		//	newTank->SetBaseColor(FLinearColor{.5,.05,.05});
@@ -54,4 +56,14 @@ FTankzMapData ATankzGameModeBase::LoadJson()
 	}
 
 	return TankzMapData;
+}
+
+int ATankzGameModeBase::FindIndexFor(FString mesh)
+{
+	for(int i=0; i<TankTypes.Num();++i) {
+		if(TankTypes[i].Name==mesh)
+			return i;
+	}
+	UE_LOG(LogTemp, Error, TEXT("Mesh actor not found: %s"), *mesh);
+	return 0;
 }

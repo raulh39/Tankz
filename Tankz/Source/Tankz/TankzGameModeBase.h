@@ -24,4 +24,6 @@ private:
 
 	FTankzMapData LoadJson();
 	void Spawn(FTankData tank, bool isAttacker);
+
+	int FindIndexFor(FString mesh);
 };
