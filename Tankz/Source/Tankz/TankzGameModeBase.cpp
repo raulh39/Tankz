@@ -1,7 +1,6 @@
 #include "TankzGameModeBase.h"
 #include "Paths.h"
 #include "Engine.h"
-#include "Actors/Tank.h"
 #include "JsonObjectConverter.h"
 #include "Engine/Blueprint.h"
 
