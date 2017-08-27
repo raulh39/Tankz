@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "Actors/Tank.h"
 #include "JsonObjectConverter.h"
+#include "Engine/Blueprint.h"
 
 ATankzGameModeBase::ATankzGameModeBase() {
 	{
@@ -28,11 +29,22 @@ ATankzGameModeBase::ATankzGameModeBase() {
 	if (MaterialInstance.Object == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("Material Asset not found: %s"), matLocator);
 	}
+
+	
 }
 
 void ATankzGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	{
+		FVector translation{0.f, 0.f, 0.f};
+		FVector Axis{0,0,1};
+		FRotator rotation{FQuat(Axis, 45*PI/180)};
+
+		ATankBase* myTest = GetWorld()->SpawnActor<ATankBase>(TankClassTest, translation, rotation);
+		myTest->SetSelected(true);
+	}
 
 	FTankzMapData TankzMapData = LoadJson();
 
@@ -42,6 +54,8 @@ void ATankzGameModeBase::BeginPlay()
 	for(auto tank: TankzMapData.defender) {
 		Spawn(tank, false);
 	}
+
+
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker) {
@@ -75,12 +89,6 @@ FTankzMapData ATankzGameModeBase::LoadJson()
 		FFileHelper::LoadFileToString(JsonString, *fileName);
 
 		FJsonObjectConverter::JsonObjectStringToUStruct<FTankzMapData>(JsonString, &TankzMapData, 0, 0);
-	}
-
-	{
-		FString OutJsonString;
-		FJsonObjectConverter::UStructToJsonObjectString<FTankzMapData>(TankzMapData,OutJsonString);
-		UE_LOG(LogTemp, Log, TEXT("TankzMapData: %s"),*(OutJsonString));
 	}
 
 	return TankzMapData;

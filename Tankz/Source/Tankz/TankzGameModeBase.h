@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Data/TankzMapData.h"
-
+#include "Actors/TankBase.h"
 #include "TankzGameModeBase.generated.h"
 
 /**
@@ -22,8 +22,12 @@ public:
 
 	UPROPERTY()
 	UStaticMesh * ShermanMesh;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATankBase> TankClassTest;
 	
 private:
+
 	FTankzMapData LoadJson();
 	void Spawn(FTankData tank, bool isAttacker);
 };
