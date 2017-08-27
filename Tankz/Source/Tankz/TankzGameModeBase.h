@@ -17,12 +17,6 @@ public:
 	ATankzGameModeBase();
 	virtual void BeginPlay() override;
 
-	UPROPERTY()
-	UStaticMesh * TankMesh;
-
-	UPROPERTY()
-	UStaticMesh * ShermanMesh;
-
 	UPROPERTY(EditAnywhere)
 	TArray<FTankTypeData> TankTypes;
 	
