@@ -6,6 +6,8 @@
 #include "Data/TankTypeData.h"
 #include "TankzGameModeBase.generated.h"
 
+class ATankzGameState;
+
 /**
  * 
  */
@@ -23,7 +25,7 @@ public:
 private:
 
 	FTankzMapData LoadJson();
-	void Spawn(FTankData tank, bool isAttacker);
+	void Spawn(FTankData tank, bool isAttacker, ATankzGameState*state);
 
 	int FindIndexFor(FString mesh);
 };
