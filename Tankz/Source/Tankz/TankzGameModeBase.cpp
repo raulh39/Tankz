@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "JsonObjectConverter.h"
 #include "Engine/Blueprint.h"
+#include "TankzGameState.h"
 
 ATankzGameModeBase::ATankzGameModeBase() {
 }
@@ -11,6 +12,12 @@ void ATankzGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	auto GameState = GetGameState<ATankzGameState>();
+	if(!GameState) {
+		UE_LOG(LogTemp, Error, TEXT("GameState is not ATankzGameState class. Aborting."));
+		return;
+	}
+
 	FTankzMapData TankzMapData = LoadJson();
 
 	for(auto tank: TankzMapData.attacker) {
@@ -48,7 +55,7 @@ FTankzMapData ATankzGameModeBase::LoadJson()
 	{
 		FString JsonString;
 		const FString fileName = FPaths::Combine(FPaths::GameConfigDir(), TEXT("map.json"));
-		UE_LOG(LogTemp, Log, TEXT("fileName: %s"),*fileName);
+		UE_LOG(LogTemp, Log, TEXT("Loading map from file: %s"),*fileName);
 		FFileHelper::LoadFileToString(JsonString, *fileName);
 
 		FJsonObjectConverter::JsonObjectStringToUStruct<FTankzMapData>(JsonString, &TankzMapData, 0, 0);
