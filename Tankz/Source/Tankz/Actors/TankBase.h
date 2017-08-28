@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Data/TankData.h"
+
 #include "TankBase.generated.h"
 
 UCLASS()
@@ -20,6 +22,16 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tankz")
 	void SetBaseColor(FLinearColor newBaseColor);
+
+	UPROPERTY(BlueprintReadOnly, Category = "Tankz")
+	FTankState InitialState;
+	UPROPERTY(BlueprintReadOnly, Category = "Tankz")
+	FTankState CurrentState;
+
+	void InitializeState(FTankData &state) {
+		InitialState = state;
+		CurrentState = state;
+	}
 
 protected:
 	// Called when the game starts or when spawned

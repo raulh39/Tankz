@@ -40,7 +40,8 @@ void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*
 		int index = FindIndexFor(tank.mesh);
 
 		ATankBase* newTank = GetWorld()->SpawnActor<ATankBase>(TankTypes[index].Blueprint, translation, rotation);
-		
+		newTank->InitializeState(tank);
+
 		if(isAttacker) {
 			newTank->SetBaseColor(FLinearColor{.5,.05,.05});
 			state->Attackers.Add(newTank);
