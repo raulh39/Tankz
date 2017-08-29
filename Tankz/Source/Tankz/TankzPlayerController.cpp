@@ -32,3 +32,22 @@ void ATankzPlayerController::ResetStatus()
 		NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(true);
 	}
 }
+
+void ATankzPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("CycleUp", IE_Pressed, this, &ATankzPlayerController::SelectNext);
+
+}
+
+void ATankzPlayerController::SelectNext()
+{
+	if(NextGroupOfTanksToAct.size()<2) return;
+	
+	NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(false);
+	CurrentlySelectedTank++;
+	if(CurrentlySelectedTank>=NextGroupOfTanksToAct.size())
+		CurrentlySelectedTank=0;
+	NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(true);
+}

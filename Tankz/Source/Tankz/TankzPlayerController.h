@@ -19,8 +19,11 @@ class TANKZ_API ATankzPlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	void ResetStatus();
+protected:
+	virtual void SetupInputComponent();
 private:
 	ATankzGameState* gameState;
 	std::vector<ATankBase*> NextGroupOfTanksToAct;
 	std::vector<ATankBase*>::size_type CurrentlySelectedTank;
+	void SelectNext();
 };
