@@ -37,7 +37,8 @@ void ATankzPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("CycleUp", IE_Pressed, this, &ATankzPlayerController::SelectNext);
+	InputComponent->BindAction("CycleUp",   IE_Pressed, this, &ATankzPlayerController::SelectNext);
+	InputComponent->BindAction("CycleDown", IE_Pressed, this, &ATankzPlayerController::SelectPrev);
 
 }
 
@@ -46,8 +47,25 @@ void ATankzPlayerController::SelectNext()
 	if(NextGroupOfTanksToAct.size()<2) return;
 	
 	NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(false);
-	CurrentlySelectedTank++;
-	if(CurrentlySelectedTank>=NextGroupOfTanksToAct.size())
+
+	if(CurrentlySelectedTank==NextGroupOfTanksToAct.size()-1)
 		CurrentlySelectedTank=0;
+	else
+		CurrentlySelectedTank++;
+
+	NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(true);
+}
+
+void ATankzPlayerController::SelectPrev()
+{
+	if(NextGroupOfTanksToAct.size()<2) return;
+	
+	NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(false);
+	
+	if(CurrentlySelectedTank==0)
+		CurrentlySelectedTank=NextGroupOfTanksToAct.size()-1;
+	else
+		CurrentlySelectedTank--;
+
 	NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(true);
 }

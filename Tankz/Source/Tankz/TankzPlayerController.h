@@ -26,4 +26,5 @@ private:
 	std::vector<ATankBase*> NextGroupOfTanksToAct;
 	std::vector<ATankBase*>::size_type CurrentlySelectedTank;
 	void SelectNext();
+	void SelectPrev();
 };
