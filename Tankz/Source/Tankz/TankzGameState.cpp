@@ -34,7 +34,7 @@ std::tuple<int32,bool> ATankzGameState::getFirstInitiative(TArray<ATankBase*> ta
 {
 	if(Status == Attacking) { //Greater initiative goes first
 		int32 currentInitiative = -1;
-		for(auto &tank: tanks)
+		for(auto tank: tanks)
 			if(!tank->hasActed && tank->CurrentState.initiative > currentInitiative)
 				currentInitiative = tank->CurrentState.initiative;
 		if(currentInitiative == -1)
@@ -43,7 +43,7 @@ std::tuple<int32,bool> ATankzGameState::getFirstInitiative(TArray<ATankBase*> ta
 	}
 	//In all other cases, greater initiative goes last
 	int32 currentInitiative = 1000;
-	for(auto &tank: tanks)
+	for(auto tank: tanks)
 		if(!tank->hasActed && (tank->CurrentState.initiative < currentInitiative))
 			currentInitiative = tank->CurrentState.initiative;
 	if(currentInitiative == 1000)
@@ -53,7 +53,12 @@ std::tuple<int32,bool> ATankzGameState::getFirstInitiative(TArray<ATankBase*> ta
 
 std::vector<ATankBase*> ATankzGameState::getAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks) const
 {
-	return std::vector<ATankBase*>();
+	std::vector<ATankBase*> to_return;
+	for(auto tank: tanks) {
+		if(!tank->hasActed && tank->CurrentState.initiative == initiative)
+			to_return.push_back(tank);
+	}
+	return to_return;
 }
 
 std::vector<ATankBase*> ATankzGameState::GetNextGroupOfTanksToAct()
