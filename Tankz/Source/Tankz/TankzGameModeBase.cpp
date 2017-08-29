@@ -4,6 +4,7 @@
 #include "JsonObjectConverter.h"
 #include "Engine/Blueprint.h"
 #include "TankzGameState.h"
+#include "TankzPlayerController.h"
 
 ATankzGameModeBase::ATankzGameModeBase() {
 }
@@ -27,7 +28,12 @@ void ATankzGameModeBase::BeginPlay()
 		Spawn(tank, false, GameState);
 	}
 
-
+	auto PlayerController = Cast<ATankzPlayerController>(GetWorld()->GetFirstPlayerController());
+	if(!PlayerController) {
+		UE_LOG(LogTemp, Error, TEXT("PlayerController is null in ATankzGameModeBase::BeginPlay!!"));
+		return;
+	}
+	PlayerController->ResetStatus();
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {

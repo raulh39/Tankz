@@ -67,6 +67,7 @@ std::vector<ATankBase*> ATankzGameState::GetNextGroupOfTanksToAct()
 	bool attackersCanAct, defendersCanAct;
 	std::tie(attackersFirstInitiative, attackersCanAct) = getFirstInitiative(Attackers);
 	std::tie(defendersFirstInitiative, defendersCanAct) = getFirstInitiative(Defenders);
+	UE_LOG(LogTemp, Log, TEXT("Initiatives: %s/%d    %s/%d"), attackersCanAct?TEXT("true"):TEXT("false"), attackersCanAct, defendersCanAct?TEXT("true"):TEXT("false"), defendersFirstInitiative);
 	if(!attackersCanAct && !defendersCanAct) {
 		resetTanks();
 		incrementStatus();
