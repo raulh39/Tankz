@@ -22,4 +22,5 @@ public:
 private:
 	ATankzGameState* gameState;
 	std::vector<ATankBase*> NextGroupOfTanksToAct;
+	std::vector<ATankBase*>::size_type CurrentlySelectedTank;
 };

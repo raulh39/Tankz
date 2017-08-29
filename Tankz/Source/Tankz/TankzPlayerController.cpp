@@ -27,4 +27,8 @@ void ATankzPlayerController::ResetStatus()
 	for(auto tank: NextGroupOfTanksToAct) {
 		UE_LOG(LogTemp, Log, TEXT("The tank '%s' will act"), *tank->InitialState.name);
 	}
+	CurrentlySelectedTank = 0;
+	if(NextGroupOfTanksToAct.size()) {
+		NextGroupOfTanksToAct[CurrentlySelectedTank]->SetSelected(true);
+	}
 }
