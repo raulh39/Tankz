@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "TankzGameState.h"
-#include <vector>
+
 #include "TankzPlayerController.generated.h"
 
 class ATankBase;
@@ -18,13 +17,7 @@ class TANKZ_API ATankzPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
-	void ResetStatus();
+	void ResetSelected();
 protected:
 	virtual void SetupInputComponent();
-private:
-	ATankzGameState* gameState;
-	std::vector<ATankBase*> NextGroupOfTanksToAct;
-	std::vector<ATankBase*>::size_type CurrentlySelectedTank;
-	void SelectNext();
-	void SelectPrev();
 };

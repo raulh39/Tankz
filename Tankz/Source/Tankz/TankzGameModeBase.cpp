@@ -18,6 +18,7 @@ void ATankzGameModeBase::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("GameState is not ATankzGameState class. Aborting."));
 		return;
 	}
+	GameState->CurrentPhase = TankzPhase_Command;
 
 	FTankzMapData TankzMapData = LoadJson();
 
@@ -28,12 +29,11 @@ void ATankzGameModeBase::BeginPlay()
 		Spawn(tank, false, GameState);
 	}
 
-	auto PlayerController = Cast<ATankzPlayerController>(GetWorld()->GetFirstPlayerController());
-	if(!PlayerController) {
-		UE_LOG(LogTemp, Error, TEXT("PlayerController is null in ATankzGameModeBase::BeginPlay!!"));
-		return;
+	if(!RecalculateActingTanks()) {
+		UE_LOG(LogTemp, Error, TEXT("No Tank can Act. Program error. Aborting."));
 	}
-	PlayerController->ResetStatus();
+	SelectedTank=0;
+	ActingTanks[SelectedTank]->SetSelected(true);
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {
@@ -81,4 +81,125 @@ int ATankzGameModeBase::FindIndexFor(FString mesh)
 	}
 	UE_LOG(LogTemp, Error, TEXT("Mesh actor not found: %s"), *mesh);
 	return 0;
+}
+
+bool ATankzGameModeBase::RecalculateActingTanks()
+{
+	auto GameState = GetGameState<ATankzGameState>();
+
+	int32 attackersFirstInitiative, defendersFirstInitiative;
+	bool attackersCanAct, defendersCanAct;
+	std::tie(attackersFirstInitiative, attackersCanAct) = getFirstInitiative(GameState->Attackers);
+	std::tie(defendersFirstInitiative, defendersCanAct) = getFirstInitiative(GameState->Defenders);
+	UE_LOG(LogTemp, Log, TEXT("Initiatives: %s/%d    %s/%d"), attackersCanAct?TEXT("true"):TEXT("false"), attackersCanAct, defendersCanAct?TEXT("true"):TEXT("false"), defendersFirstInitiative);
+	if(!attackersCanAct && !defendersCanAct) {
+		resetTanks();
+		incrementStatus();
+		return false;
+	}
+	if(!defendersCanAct) {
+		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
+		return true;
+	}
+	if(!attackersCanAct) {
+		SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
+		return true;
+	}
+	if( (GameState->CurrentPhase == TankzPhase_Attacking && attackersFirstInitiative >= defendersFirstInitiative) ||
+		(GameState->CurrentPhase != TankzPhase_Attacking && attackersFirstInitiative < defendersFirstInitiative) ) {
+		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
+		return true;
+	}
+	SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
+	return true;
+}
+
+void ATankzGameModeBase::resetTanks()
+{
+	auto GameState = GetGameState<ATankzGameState>();
+
+	for(auto tank: GameState->Attackers) {
+		if(tank->isAlive)
+			tank->hasActed = false;
+	}
+	for(auto tank: GameState->Defenders) {
+		if(tank->isAlive)
+			tank->hasActed = false;
+	}
+}
+
+void ATankzGameModeBase::incrementStatus()
+{
+	auto GameState = GetGameState<ATankzGameState>();
+	switch (GameState->CurrentPhase)
+	{
+	case TankzPhase_Moving:
+		GameState->CurrentPhase = TankzPhase_Attacking;
+		break;
+	case TankzPhase_Attacking:
+		GameState->CurrentPhase = TankzPhase_Command;
+		break;
+	case TankzPhase_Command:
+		GameState->CurrentPhase = TankzPhase_Moving;
+		break;
+	}
+}
+
+std::tuple<int32,bool> ATankzGameModeBase::getFirstInitiative(TArray<ATankBase*> tanks) const
+{
+	auto GameState = GetGameState<ATankzGameState>();
+	if(GameState->CurrentPhase == TankzPhase_Attacking) { //Greater initiative goes first
+		int32 currentInitiative = -1;
+		for(auto tank: tanks)
+			if(!tank->hasActed && tank->CurrentState.initiative > currentInitiative)
+				currentInitiative = tank->CurrentState.initiative;
+		if(currentInitiative == -1)
+			return std::make_tuple(0, false);
+		return std::make_tuple(currentInitiative, true);
+	}
+	//In all other cases, greater initiative goes last
+	int32 currentInitiative = 1000;
+	for(auto tank: tanks)
+		if(!tank->hasActed && (tank->CurrentState.initiative < currentInitiative))
+			currentInitiative = tank->CurrentState.initiative;
+	if(currentInitiative == 1000)
+		return std::make_tuple(0, false);
+	return std::make_tuple(currentInitiative, true);
+}
+
+void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks)
+{
+	ActingTanks.clear();
+	for(auto tank: tanks) {
+		if(!tank->hasActed && tank->CurrentState.initiative == initiative)
+			ActingTanks.push_back(tank);
+	}
+}
+
+void ATankzGameModeBase::SelectNextTank()
+{
+	if(ActingTanks.size()<2) return;
+	
+	ActingTanks[SelectedTank]->SetSelected(false);
+
+	if(SelectedTank==ActingTanks.size()-1)
+		SelectedTank=0;
+	else
+		SelectedTank++;
+
+	ActingTanks[SelectedTank]->SetSelected(true);
+}
+
+void ATankzGameModeBase::SelectPrevTank()
+{
+	if(ActingTanks.size()<2) return;
+	
+	ActingTanks[SelectedTank]->SetSelected(false);
+	
+	if(SelectedTank==0)
+		SelectedTank=ActingTanks.size()-1;
+	else
+		SelectedTank--;
+
+	ActingTanks[SelectedTank]->SetSelected(true);
 }
