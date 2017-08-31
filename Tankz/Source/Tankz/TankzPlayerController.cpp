@@ -16,4 +16,5 @@ void ATankzPlayerController::SetupInputComponent()
 	}
 	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::SelectNextTank);
 	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::SelectPrevTank);
+	InputComponent->BindAction("Select", IE_Pressed, gameMode, &ATankzGameModeBase::MarkThatTheSelectedTankHasActed);
 }

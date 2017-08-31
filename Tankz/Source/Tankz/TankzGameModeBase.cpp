@@ -203,3 +203,19 @@ void ATankzGameModeBase::SelectPrevTank()
 
 	ActingTanks[SelectedTank]->SetSelected(true);
 }
+
+void ATankzGameModeBase::MarkThatTheSelectedTankHasActed()
+{
+	ActingTanks[SelectedTank]->hasActed = true;
+	ActingTanks[SelectedTank]->SetSelected(false);
+	if(ActingTanks.size()>1) {
+		ActingTanks.erase(ActingTanks.begin()+SelectedTank);
+		if(SelectedTank==ActingTanks.size())
+			SelectedTank=0;
+		ActingTanks[SelectedTank]->SetSelected(true);
+		return;
+	}
+	RecalculateActingTanks();
+	SelectedTank=0;
+	ActingTanks[SelectedTank]->SetSelected(true);
+}

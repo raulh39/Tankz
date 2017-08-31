@@ -27,6 +27,7 @@ public:
 
 	void SelectNextTank();
 	void SelectPrevTank();
+	void MarkThatTheSelectedTankHasActed();
 
 private:
 	FTankzMapData LoadJson();
