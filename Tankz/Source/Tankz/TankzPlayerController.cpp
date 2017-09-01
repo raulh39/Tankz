@@ -9,12 +9,6 @@
 
 ATankzPlayerController::ATankzPlayerController()
 {
-	auto InplayUserWidget = ConstructorHelpers::FObjectFinder<UUserWidget>(TEXT("WidgetBlueprint'/Game/InPlayWidgetBP.InPlayWidgetBP'"));
-	if(InplayUserWidget.Object == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("UUserWidget NOT found"));
-	} else {
-		UE_LOG(LogTemp, Log, TEXT("UUserWidget found"));
-	}
 }
 
 void ATankzPlayerController::SetupInputComponent()
@@ -31,8 +25,22 @@ void ATankzPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Select", IE_Pressed, gameMode, &ATankzGameModeBase::MarkThatTheSelectedTankHasActed);
 }
 
-void ATankzPlayerController::BeginPlay()
+void ATankzPlayerController::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 	
+	auto u = LoadObject<UBlueprint>(nullptr, TEXT("/Game/InPlayWidgetBP.InPlayWidgetBP"));
+	if(u == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("UUserWidget NOT found"));
+	} else {
+		UE_LOG(LogTemp, Log, TEXT("UUserWidget found"));
+		dialogueHUD = CreateWidget<UInplayUserWidgetBase>(GetWorld(), u->GeneratedClass);
+		if(dialogueHUD) {
+			UE_LOG(LogTemp, Log, TEXT("UInplayUserWidgetBase created"));
+			dialogueHUD->AddToViewport();
+			dialogueHUD->PhaseText = TEXT("hahahaha");
+		} else {
+			UE_LOG(LogTemp, Error, TEXT("UInplayUserWidgetBase NOT created"));
+		}
+	}
 }

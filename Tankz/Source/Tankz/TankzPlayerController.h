@@ -8,6 +8,7 @@
 #include "TankzPlayerController.generated.h"
 
 class ATankBase;
+class UInplayUserWidgetBase;
 
 /**
  * 
@@ -18,8 +19,10 @@ class TANKZ_API ATankzPlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	ATankzPlayerController();
-	void ResetSelected();
+	
 protected:
 	virtual void SetupInputComponent() override;
-	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
+private:
+	UInplayUserWidgetBase* dialogueHUD;
 };
