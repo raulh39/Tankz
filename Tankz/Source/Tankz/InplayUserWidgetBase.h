@@ -17,5 +17,5 @@ class TANKZ_API UInplayUserWidgetBase : public UUserWidget
 public:
 	/** Current phase of the game (Moving, attacking, ... */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tankz")
-	FText PhaseText;
+	FString PhaseText;
 };

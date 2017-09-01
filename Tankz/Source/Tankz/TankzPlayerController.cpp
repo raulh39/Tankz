@@ -9,26 +9,6 @@
 
 ATankzPlayerController::ATankzPlayerController()
 {
-}
-
-void ATankzPlayerController::SetupInputComponent()
-{
-	Super::SetupInputComponent();
-
-	ATankzGameModeBase *gameMode = Cast<ATankzGameModeBase>(GetWorld()->GetAuthGameMode());
-	if(!gameMode) {
-		UE_LOG(LogTemp, Error, TEXT("GameMode is not ATankzGameModeBase class. Aborting."));
-		return;
-	}
-	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::SelectNextTank);
-	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::SelectPrevTank);
-	InputComponent->BindAction("Select", IE_Pressed, gameMode, &ATankzGameModeBase::MarkThatTheSelectedTankHasActed);
-}
-
-void ATankzPlayerController::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	
 	auto u = LoadObject<UBlueprint>(nullptr, TEXT("/Game/InPlayWidgetBP.InPlayWidgetBP"));
 	if(u == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("UUserWidget NOT found"));
@@ -43,4 +23,18 @@ void ATankzPlayerController::PostInitializeComponents()
 			UE_LOG(LogTemp, Error, TEXT("UInplayUserWidgetBase NOT created"));
 		}
 	}
+}
+
+void ATankzPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	ATankzGameModeBase *gameMode = Cast<ATankzGameModeBase>(GetWorld()->GetAuthGameMode());
+	if(!gameMode) {
+		UE_LOG(LogTemp, Error, TEXT("GameMode is not ATankzGameModeBase class. Aborting."));
+		return;
+	}
+	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::SelectNextTank);
+	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::SelectPrevTank);
+	InputComponent->BindAction("Select", IE_Pressed, gameMode, &ATankzGameModeBase::MarkThatTheSelectedTankHasActed);
 }

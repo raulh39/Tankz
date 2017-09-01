@@ -22,7 +22,6 @@ public:
 	
 protected:
 	virtual void SetupInputComponent() override;
-	virtual void PostInitializeComponents() override;
 private:
 	UInplayUserWidgetBase* dialogueHUD;
 };
