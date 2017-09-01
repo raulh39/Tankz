@@ -17,7 +17,9 @@ class TANKZ_API ATankzPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+	ATankzPlayerController();
 	void ResetSelected();
 protected:
-	virtual void SetupInputComponent();
+	virtual void SetupInputComponent() override;
+	virtual void BeginPlay() override;
 };
