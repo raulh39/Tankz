@@ -27,7 +27,7 @@ public:
 
 	void SelectNextTank();
 	void SelectPrevTank();
-	void MarkThatTheSelectedTankHasActed();
+	bool MarkThatTheSelectedTankHasActed(); //Will return true if a phase change was necesary
 
 private:
 	FTankzMapData LoadJson();

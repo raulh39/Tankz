@@ -9,6 +9,7 @@
 
 class ATankBase;
 class UInplayUserWidgetBase;
+class ATankzGameModeBase;
 
 /**
  * 
@@ -24,4 +25,6 @@ protected:
 	virtual void SetupInputComponent() override;
 private:
 	UInplayUserWidgetBase* dialogueHUD;
+	ATankzGameModeBase *gameMode;
+	void OnSelect();
 };

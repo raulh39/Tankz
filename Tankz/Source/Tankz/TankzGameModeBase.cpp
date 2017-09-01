@@ -18,7 +18,7 @@ void ATankzGameModeBase::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("GameState is not ATankzGameState class. Aborting."));
 		return;
 	}
-	GameState->CurrentPhase = TankzPhase_Command;
+	GameState->CurrentPhase = TankzPhase_Moving;
 
 	FTankzMapData TankzMapData = LoadJson();
 
@@ -204,7 +204,7 @@ void ATankzGameModeBase::SelectPrevTank()
 	ActingTanks[SelectedTank]->SetSelected(true);
 }
 
-void ATankzGameModeBase::MarkThatTheSelectedTankHasActed()
+bool ATankzGameModeBase::MarkThatTheSelectedTankHasActed()
 {
 	ActingTanks[SelectedTank]->hasActed = true;
 	ActingTanks[SelectedTank]->SetSelected(false);
@@ -213,9 +213,10 @@ void ATankzGameModeBase::MarkThatTheSelectedTankHasActed()
 		if(SelectedTank==ActingTanks.size())
 			SelectedTank=0;
 		ActingTanks[SelectedTank]->SetSelected(true);
-		return;
+		return false;
 	}
 	RecalculateActingTanks();
 	SelectedTank=0;
 	ActingTanks[SelectedTank]->SetSelected(true);
+	return true;
 }
