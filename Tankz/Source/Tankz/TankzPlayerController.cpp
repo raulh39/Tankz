@@ -41,7 +41,7 @@ void ATankzPlayerController::SetupInputComponent()
 }
 
 void ATankzPlayerController::OnSelect() {
-	auto hasBeenAPhaseChange = gameMode->MarkThatTheSelectedTankHasActed();
+	auto hasBeenAPhaseChange = gameMode->MakeTheSelectedTankAct();
 	if(!hasBeenAPhaseChange) return;
 	auto GameState = GetWorld()->GetGameState<ATankzGameState>();
 	if(TankzPhase_Moving == GameState->CurrentPhase) {

@@ -91,7 +91,7 @@ bool ATankzGameModeBase::RecalculateActingTanks()
 	bool attackersCanAct, defendersCanAct;
 	std::tie(attackersFirstInitiative, attackersCanAct) = getFirstInitiative(GameState->Attackers);
 	std::tie(defendersFirstInitiative, defendersCanAct) = getFirstInitiative(GameState->Defenders);
-	UE_LOG(LogTemp, Log, TEXT("Initiatives: %s/%d    %s/%d"), attackersCanAct?TEXT("true"):TEXT("false"), attackersCanAct, defendersCanAct?TEXT("true"):TEXT("false"), defendersFirstInitiative);
+	//UE_LOG(LogTemp, Log, TEXT("Initiatives: %s/%d    %s/%d"), attackersCanAct?TEXT("true"):TEXT("false"), attackersCanAct, defendersCanAct?TEXT("true"):TEXT("false"), defendersFirstInitiative);
 	if(!attackersCanAct && !defendersCanAct) {
 		resetTanks();
 		incrementStatus();
@@ -203,6 +203,11 @@ void ATankzGameModeBase::SelectPrevTank()
 		SelectedTank--;
 
 	ActingTanks[SelectedTank]->SetSelected(true);
+}
+
+bool ATankzGameModeBase::MakeTheSelectedTankAct()
+{
+	return MarkThatTheSelectedTankHasActed();
 }
 
 bool ATankzGameModeBase::MarkThatTheSelectedTankHasActed()

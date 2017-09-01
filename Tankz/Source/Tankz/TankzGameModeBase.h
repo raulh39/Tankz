@@ -27,7 +27,7 @@ public:
 
 	void SelectNextTank();
 	void SelectPrevTank();
-	bool MarkThatTheSelectedTankHasActed(); //Will return true if a phase change was necesary
+	bool MakeTheSelectedTankAct();  //Will return true if a phase change was necesary
 
 private:
 	FTankzMapData LoadJson();
@@ -58,4 +58,5 @@ private:
 	std::tuple<int32,bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);
 
+	bool MarkThatTheSelectedTankHasActed();
 };
