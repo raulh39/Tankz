@@ -29,9 +29,7 @@ void ATankzGameModeBase::BeginPlay()
 		Spawn(tank, false, GameState);
 	}
 
-	if(!RecalculateActingTanks()) {
-		UE_LOG(LogTemp, Error, TEXT("No Tank can Act. Program error. Aborting."));
-	}
+	RecalculateActingTanks();
 	SelectedTank=0;
 	ActingTanks[SelectedTank]->SetSelected(true);
 }
@@ -177,7 +175,7 @@ void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative
 	}
 }
 
-void ATankzGameModeBase::SelectNextTank()
+void ATankzGameModeBase::OnCycleUp()
 {
 	if(ActingTanks.size()<2) return;
 	
@@ -191,7 +189,7 @@ void ATankzGameModeBase::SelectNextTank()
 	ActingTanks[SelectedTank]->SetSelected(true);
 }
 
-void ATankzGameModeBase::SelectPrevTank()
+void ATankzGameModeBase::OnCycleDown()
 {
 	if(ActingTanks.size()<2) return;
 	
@@ -205,7 +203,7 @@ void ATankzGameModeBase::SelectPrevTank()
 	ActingTanks[SelectedTank]->SetSelected(true);
 }
 
-bool ATankzGameModeBase::MakeTheSelectedTankAct()
+bool ATankzGameModeBase::OnAct()
 {
 	return MarkThatTheSelectedTankHasActed();
 }

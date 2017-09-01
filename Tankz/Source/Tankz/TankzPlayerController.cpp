@@ -35,13 +35,13 @@ void ATankzPlayerController::SetupInputComponent()
 		UE_LOG(LogTemp, Error, TEXT("GameMode is not ATankzGameModeBase class. Aborting."));
 		return;
 	}
-	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::SelectNextTank);
-	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::SelectPrevTank);
-	InputComponent->BindAction("Select", IE_Pressed, this, &ATankzPlayerController::OnSelect);
+	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleUp);
+	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleDown);
+	InputComponent->BindAction("Select", IE_Pressed, this, &ATankzPlayerController::OnAct);
 }
 
-void ATankzPlayerController::OnSelect() {
-	auto hasBeenAPhaseChange = gameMode->MakeTheSelectedTankAct();
+void ATankzPlayerController::OnAct() {
+	auto hasBeenAPhaseChange = gameMode->OnAct();
 	if(!hasBeenAPhaseChange) return;
 	auto GameState = GetWorld()->GetGameState<ATankzGameState>();
 	if(TankzPhase_Moving == GameState->CurrentPhase) {

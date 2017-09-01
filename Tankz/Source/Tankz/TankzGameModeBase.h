@@ -25,9 +25,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FTankTypeData> TankTypes;
 
-	void SelectNextTank();
-	void SelectPrevTank();
-	bool MakeTheSelectedTankAct();  //Will return true if a phase change was necesary
+	void OnCycleUp();
+	void OnCycleDown();
+	bool OnAct();  //Will return true if a phase change was necesary
 
 private:
 	FTankzMapData LoadJson();
