@@ -95,23 +95,24 @@ bool ATankzGameModeBase::RecalculateActingTanks()
 	if(!attackersCanAct && !defendersCanAct) {
 		resetTanks();
 		incrementStatus();
-		return false;
+		RecalculateActingTanks();
+		return true;
 	}
 	if(!defendersCanAct) {
 		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
-		return true;
+		return false;
 	}
 	if(!attackersCanAct) {
 		SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
-		return true;
+		return false;
 	}
 	if( (GameState->CurrentPhase == TankzPhase_Attacking && attackersFirstInitiative >= defendersFirstInitiative) ||
 		(GameState->CurrentPhase != TankzPhase_Attacking && attackersFirstInitiative < defendersFirstInitiative) ) {
 		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
-		return true;
+		return false;
 	}
 	SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
-	return true;
+	return false;
 }
 
 void ATankzGameModeBase::resetTanks()
@@ -215,8 +216,8 @@ bool ATankzGameModeBase::MarkThatTheSelectedTankHasActed()
 		ActingTanks[SelectedTank]->SetSelected(true);
 		return false;
 	}
-	RecalculateActingTanks();
+	auto hasBeenAStateChange = RecalculateActingTanks();
 	SelectedTank=0;
 	ActingTanks[SelectedTank]->SetSelected(true);
-	return true;
+	return hasBeenAStateChange;
 }
