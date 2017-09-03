@@ -1,11 +1,11 @@
 #include <iostream>
-
+#include <memory>
 
 enum EStates
 {
 	SelectingTankToFire,
 	SelectingTarget,
-	NumberOfEStates
+	EndState
 };
 
 class GameState;
@@ -32,11 +32,13 @@ public:
 	//Guards used when transitioning states:
 	bool MoreTanksToFire();
 
+	EStates currentState() const { return current_state; }
+
 private:
-	friend class GameState;
 	EStates current_state;
-	GameState*states[NumberOfEStates];
-	void ChangeState(EStates new_state);
+	std::unique_ptr<GameState> states[EndState];
+	using mptr = EStates (GameState::*)(GameMode&);
+	void Exec(mptr func);
 };
 
 class GameState
@@ -46,39 +48,95 @@ public:
 	virtual void OnEntry(GameMode&  game_mode) {}
 	virtual void OnExit(GameMode&  game_mode) {}
 
-	virtual void OnCycle(GameMode&  game_mode) {}
-	virtual void OnSelect(GameMode& game_mode) {}
-protected:
-	void ChangeState(GameMode& game_mode, EStates new_state) {
-		game_mode.ChangeState(new_state);
+	virtual EStates OnCycle(GameMode&  game_mode) { return game_mode.currentState(); }
+	virtual EStates OnSelect(GameMode& game_mode) { return game_mode.currentState(); }
+};
+
+void GameMode::OnCycle() {
+	Exec(&GameState::OnCycle);
+}
+
+void GameMode::OnSelect() {
+	Exec(&GameState::OnSelect);
+}
+
+void GameMode::Exec(mptr func) {
+	states[current_state]->OnExit(*this);
+	current_state = (*states[current_state].*func)(*this);
+	states[current_state]->OnEntry(*this);
+}
+
+class SelectingTankToFireState: public GameState
+{
+	virtual void OnEntry(GameMode& game_mode) {
+		game_mode.HighlightSelectedTank();
+	}
+	virtual void OnExit(GameMode& game_mode) {
+		game_mode.UnhighlightSelectedTank();
+	}
+	virtual EStates OnCycle(GameMode& game_mode) {
+		game_mode.IncSelected();
+		return SelectingTankToFire;
+	}
+	virtual EStates OnSelect(GameMode& game_mode) {
+		game_mode.SelectObjectivesGroup();
+		return SelectingTarget;
 	}
 };
 
+class SelectingTargetState: public GameState
+{
+	virtual void OnEntry(GameMode& game_mode) {
+		game_mode.HighlightSelectedObjective();
+	}
+	virtual void OnExit(GameMode& game_mode) {
+		game_mode.UnhighlightSelectedObjective();
+	}
+	virtual EStates OnCycle(GameMode& game_mode) {
+		game_mode.IncSelectedObjective();
+		return SelectingTarget;
+	}
+	virtual EStates OnSelect(GameMode& game_mode) {
+		game_mode.AssignDamage();
+		if(game_mode.MoreTanksToFire())
+			return SelectingTankToFire;
+		return EndState;
+	}
+};
 
-void GameMode::ChangeState(EStates new_state) {
-	states[current_state]->OnExit(*this);
-	current_state = new_state;
-	states[current_state]->OnExit(*this);
+GameMode::GameMode()
+{
+	states[SelectingTankToFire] = std::make_unique<SelectingTankToFireState>();
+	states[SelectingTarget] = std::make_unique<SelectingTargetState>();
+
+	current_state = SelectingTankToFire;
+	states[current_state]->OnEntry(*this);
 }
-
 
 int main()
 {
 	GameMode game;
+	std::cout << "\nPressinng Cycle()\n";
 	game.OnCycle();
+	std::cout << "\nPressinng Select()\n";
 	game.OnSelect();
+	std::cout << "\nPressinng Cycle()\n";
 	game.OnCycle();
+	std::cout << "\nPressinng Cycle()\n";
 	game.OnCycle();
+	std::cout << "\nPressinng Select()\n";
 	game.OnSelect();
+	std::cout << "\nPressinng Cycle()\n";
 	game.OnCycle();
+	std::cout << "\nPressinng Cycle()\n";
 	game.OnCycle();
+	std::cout << "\nPressinng Select()\n";
 	game.OnSelect();
+	std::cout << "\nPressinng Cycle()\n";
 	game.OnCycle();
+	std::cout << "\nPressinng Select()\n";
 	game.OnSelect();
 }
-
-
-
 
 void GameMode::HighlightSelectedTank()
 {
@@ -121,3 +179,8 @@ void GameMode::AssignDamage()
 	std::cout << "Executing AssignDamage\n";
 }
 
+bool GameMode::MoreTanksToFire()
+{
+	std::cout << "Returning true from MoreTanksToFire\n";
+	return true;
+}
