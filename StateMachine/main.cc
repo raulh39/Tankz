@@ -39,6 +39,8 @@ private:
 	std::unique_ptr<GameState> states[EndState];
 	using mptr = EStates (GameState::*)(GameMode&);
 	void Exec(mptr func);
+
+	bool MoreTanksToFireExecuted=false;
 };
 
 class GameState
@@ -61,8 +63,16 @@ void GameMode::OnSelect() {
 }
 
 void GameMode::Exec(mptr func) {
+	if(current_state==EndState) {
+		std::cout << "Not executing because in end state\n";
+		return;
+	}
 	states[current_state]->OnExit(*this);
 	current_state = (*states[current_state].*func)(*this);
+	if(current_state==EndState) {
+		std::cout << "Machine stoped\n";
+		return;
+	}
 	states[current_state]->OnEntry(*this);
 }
 
@@ -136,6 +146,10 @@ int main()
 	game.OnCycle();
 	std::cout << "\nPressinng Select()\n";
 	game.OnSelect();
+	std::cout << "\nPressinng Cycle()\n";
+	game.OnCycle();
+	std::cout << "\nPressinng Select()\n";
+	game.OnSelect();
 }
 
 void GameMode::HighlightSelectedTank()
@@ -181,6 +195,11 @@ void GameMode::AssignDamage()
 
 bool GameMode::MoreTanksToFire()
 {
-	std::cout << "Returning true from MoreTanksToFire\n";
-	return true;
+	if(!MoreTanksToFireExecuted) {
+		MoreTanksToFireExecuted=true;
+		std::cout << "Returning true from MoreTanksToFire\n";
+		return true;
+	}
+	std::cout << "Returning false from MoreTanksToFire\n";
+	return false;
 }
