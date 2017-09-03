@@ -2,6 +2,15 @@
 
 #include <memory>
 
+/*
+Problemas:
+	- No puedo quedarme en el mismo estado. Siempre debo salir y vovler a entrar, lo que me ejecuta OnExit y OnEntry
+	  El OnCycle() de SelectingTankToFire, por ejemplo, no debería hacer nada si SelectedTanks.size()==1
+	- No me mola que GameMode deba conocer todos los estados. Quitar enumerados.
+
+
+*/
+
 enum EStates
 {
 	SelectingTankToFire,
