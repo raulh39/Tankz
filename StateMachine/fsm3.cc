@@ -15,8 +15,29 @@ public:
 	virtual void on_exit(FSM &fsm) = 0;
 	virtual state_type on_cycle(FSM &fsm) = 0;
 	virtual state_type on_select(FSM &fsm) = 0;
+	
 	template <typename T>
-	state_type state() { return typeid(T); }
+	static state_type state() { return typeid(T); }
+	
+	static state_type end_state() { return typeid(State); }
+};
+
+class SelectingTankToFire: public State
+{
+public:
+	virtual void on_enter(FSM &fsm) override;
+	virtual void on_exit(FSM &fsm) override;
+	virtual state_type on_cycle(FSM &fsm) override;
+	virtual state_type on_select(FSM &fsm) override;
+};
+
+class SelectingTarget: public State
+{
+public:
+	virtual void on_enter(FSM &fsm) override;
+	virtual void on_exit(FSM &fsm) override;
+	virtual state_type on_cycle(FSM &fsm) override;
+	virtual state_type on_select(FSM &fsm) override;
 };
 
 //TODO: Instead of on_XXXX() make Event a class and then
@@ -32,6 +53,10 @@ private:
 	using tmap = std::unordered_map<State::state_type, State*>;
 	tmap states;
 	State::state_type state;
+
+	//TODO: this to a subclass?
+	SelectingTankToFire selectingTankToFire;
+	SelectingTarget selectingTarget;
 
 public: //TODO: maybe this have to go to a derived class
 
@@ -51,55 +76,76 @@ public: //TODO: maybe this have to go to a derived class
 	bool MoreTanksToFire();
 };
 
-class SelectingTankToFire: public State
-{
-public:
-	virtual void on_enter(FSM &fsm) override {}
-	virtual void on_exit(FSM &fsm) override {}
-	virtual state_type on_cycle(FSM &fsm) override;
-	virtual state_type on_select(FSM &fsm) override;
-};
 
-class SelectingTarget: public State
+void SelectingTankToFire::on_enter(FSM &fsm)
 {
-public:
-	virtual void on_enter(FSM &fsm) override {}
-	virtual void on_exit(FSM &fsm) override {}
-	virtual state_type on_cycle(FSM &fsm) override;
-	virtual state_type on_select(FSM &fsm) override;
-};
+	fsm.HighlightSelectedTank();
+}
 
+void SelectingTankToFire::on_exit(FSM &fsm)
+{
+	fsm.UnhighlightSelectedTank();
+}
 
 State::state_type SelectingTankToFire::on_cycle(FSM &fsm) {
+	fsm.IncSelected();
 	return state<SelectingTankToFire>();
 }
 
 State::state_type SelectingTankToFire::on_select(FSM &fsm)
 {
+	fsm.SelectObjectivesGroup();
 	return state<SelectingTarget>();
 }
 
+void SelectingTarget::on_enter(FSM &fsm)
+{
+	fsm.HighlightSelectedObjective();
+}
+
+void SelectingTarget::on_exit(FSM &fsm)
+{
+	fsm.UnhighlightSelectedObjective();
+}
+
 State::state_type SelectingTarget::on_cycle(FSM &fsm) {
+	fsm.IncSelectedObjective();
 	return state<SelectingTarget>();
 }
 
 State::state_type SelectingTarget::on_select(FSM &fsm)
 {
-	return state<SelectingTankToFire>();
+	fsm.AssignDamage();
+	if(fsm.MoreTanksToFire()) return state<SelectingTankToFire>();
+	return end_state();
+}
+
+FSM::FSM(): state(typeid(SelectingTankToFire))
+{
+	states[typeid(SelectingTankToFire)] = &selectingTankToFire;
+	states[typeid(SelectingTarget)] = &selectingTarget;
 }
 
 //TODO: repeated code
 void FSM::on_cycle()
 {
+	if(state==State::end_state()) return;
 	states[state]->on_exit(*this);
+
 	state = states[state]->on_cycle(*this);
+
+	if(state==State::end_state()) return;
 	states[state]->on_enter(*this);
 }
 
 void FSM::on_select()
 {
+	if(state==State::end_state()) return;
 	states[state]->on_exit(*this);
+
 	state = states[state]->on_select(*this);
+
+	if(state==State::end_state()) return;
 	states[state]->on_enter(*this);
 }
 
@@ -159,29 +205,29 @@ bool FSM::MoreTanksToFire()
 int main()
 {
 	FSM game;
-	std::cout << "\nPressinng Cycle()\n";
+	std::cout << "\nPressing Cycle()\n";
 	game.on_cycle();
-	std::cout << "\nPressinng Select()\n";
+	std::cout << "\nPressing Select()\n";
 	game.on_select();
-	std::cout << "\nPressinng Cycle()\n";
+	std::cout << "\nPressing Cycle()\n";
 	game.on_cycle();
-	std::cout << "\nPressinng Cycle()\n";
+	std::cout << "\nPressing Cycle()\n";
 	game.on_cycle();
-	std::cout << "\nPressinng Select()\n";
+	std::cout << "\nPressing Select()\n";
 	game.on_select();
-	std::cout << "\nPressinng Cycle()\n";
+	std::cout << "\nPressing Cycle()\n";
 	game.on_cycle();
-	std::cout << "\nPressinng Cycle()\n";
+	std::cout << "\nPressing Cycle()\n";
 	game.on_cycle();
-	std::cout << "\nPressinng Select()\n";
+	std::cout << "\nPressing Select()\n";
 	game.on_select();
-	std::cout << "\nPressinng Cycle()\n";
+	std::cout << "\nPressing Cycle()\n";
 	game.on_cycle();
-	std::cout << "\nPressinng Select()\n";
+	std::cout << "\nPressing Select()\n";
 	game.on_select();
-	std::cout << "\nPressinng Cycle()\n";
+	std::cout << "\nPressing Cycle()\n";
 	game.on_cycle();
-	std::cout << "\nPressinng Select()\n";
+	std::cout << "\nPressing Select()\n";
 	game.on_select();
 }
 
