@@ -1,4 +1,12 @@
 #include "fsm.h"
+#include <tuple>
+
+std::tuple<SelectingTankToFire, SelectingTarget> test;
+
+template<typename T>
+State& state() {
+	return std::get<T>(test);
+}
 
 int main()
 {
@@ -27,5 +35,6 @@ int main()
 	game.on_cycle();
 	std::cout << "\nPressing Select()\n";
 	game.on_select();
-}
 
+	state<SelectingTankToFire>().on_cycle(game);
+}
