@@ -1,44 +1,46 @@
-#include "fsm.h"
+#include "game.h"
 
-void SelectingTankToFire::on_enter(FSM &fsm)
+void SelectingTankToFire::on_enter(Game &game)
 {
-	fsm.HighlightSelectedTank();
+	game.HighlightSelectedTank();
 }
 
-void SelectingTankToFire::on_exit(FSM &fsm)
+void SelectingTankToFire::on_exit(Game &game)
 {
-	fsm.UnhighlightSelectedTank();
+	game.UnhighlightSelectedTank();
 }
 
-State::state_type SelectingTankToFire::on_cycle(FSM &fsm) {
-	fsm.IncSelected();
-	return state<SelectingTankToFire>();
+void SelectingTankToFire::on_cycle(Game &game) {
+	game.IncSelected();
+	game.change_state<SelectingTankToFire>();
 }
 
-State::state_type SelectingTankToFire::on_select(FSM &fsm)
+void SelectingTankToFire::on_select(Game &game)
 {
-	fsm.SelectObjectivesGroup();
-	return state<SelectingTarget>();
+	game.SelectObjectivesGroup();
+	game.change_state<SelectingTarget>();
 }
 
-void SelectingTarget::on_enter(FSM &fsm)
+void SelectingTarget::on_enter(Game &game)
 {
-	fsm.HighlightSelectedObjective();
+	game.HighlightSelectedObjective();
 }
 
-void SelectingTarget::on_exit(FSM &fsm)
+void SelectingTarget::on_exit(Game &game)
 {
-	fsm.UnhighlightSelectedObjective();
+	game.UnhighlightSelectedObjective();
 }
 
-State::state_type SelectingTarget::on_cycle(FSM &fsm) {
-	fsm.IncSelectedObjective();
-	return state<SelectingTarget>();
+void SelectingTarget::on_cycle(Game &game) {
+	game.IncSelectedObjective();
+	game.change_state<SelectingTarget>();
 }
 
-State::state_type SelectingTarget::on_select(FSM &fsm)
+void SelectingTarget::on_select(Game &game)
 {
-	fsm.AssignDamage();
-	if(fsm.MoreTanksToFire()) return state<SelectingTankToFire>();
-	return end_state();
+	game.AssignDamage();
+	if(game.MoreTanksToFire())
+		game.change_state<SelectingTankToFire>();
+	else
+		game.to_end_state();
 }

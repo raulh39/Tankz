@@ -1,64 +1,57 @@
-#include "fsm.h"
+#include "game.h"
 
-FSM::FSM(): state(typeid(SelectingTankToFire))
+void Game::on_cycle()
 {
-	states[typeid(SelectingTankToFire)] = &selectingTankToFire;
-	states[typeid(SelectingTarget)] = &selectingTarget;
+	fsm.exec(*this, &State::on_cycle);
 }
 
-void FSM::on_cycle()
+void Game::on_select()
 {
-	exec(&State::on_cycle);
+	fsm.exec(*this, &State::on_select);
 }
 
-void FSM::on_select()
-{
-	exec(&State::on_select);
-}
-
-
-void FSM::HighlightSelectedTank()
+void Game::HighlightSelectedTank()
 {
 	std::cout << "Executing HighlightSelectedTank\n";
 }
 
-void FSM::UnhighlightSelectedTank()
+void Game::UnhighlightSelectedTank()
 {
 	std::cout << "Executing UnhighlightSelectedTank\n";
 }
 
-void FSM::IncSelected()
+void Game::IncSelected()
 {
 	std::cout << "Executing IncSelected\n";
 }
 
 
-void FSM::SelectObjectivesGroup()
+void Game::SelectObjectivesGroup()
 {
 	std::cout << "Executing SelectObjectivesGroup\n";
 }
 
-void FSM::HighlightSelectedObjective()
+void Game::HighlightSelectedObjective()
 {
 	std::cout << "Executing HighlightSelectedObjective\n";
 }
 
-void FSM::UnhighlightSelectedObjective()
+void Game::UnhighlightSelectedObjective()
 {
 	std::cout << "Executing UnhighlightSelectedObjective\n";
 }
 
-void FSM::IncSelectedObjective()
+void Game::IncSelectedObjective()
 {
 	std::cout << "Executing IncSelectedObjective\n";
 }
 
-void FSM::AssignDamage()
+void Game::AssignDamage()
 {
 	std::cout << "Executing AssignDamage\n";
 }
 
-bool FSM::MoreTanksToFire()
+bool Game::MoreTanksToFire()
 {
 	if(!MoreTanksToFireExecuted) {
 		MoreTanksToFireExecuted=true;

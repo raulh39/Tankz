@@ -1,54 +1,44 @@
 #pragma once
 
 #include "state.h"
+#include <tuple>
 
 //TODO: Instead of on_XXXX() make Event a class and then
 //           template <Event> void on<Event>(Event&evt);
+
+
+template<typename BaseSate, typename... DerivedStates>
 class FSM
 {
-public:
-	FSM();
-	void on_cycle();
-	void on_select();
-
 private:
-	using tmap = std::unordered_map<State::state_type, State*>;
-	tmap states;
-	State::state_type state;
+	std::tuple<DerivedStates...> states;
+	BaseSate *current_state;
 
-	//TODO: this to a subclass?
-	SelectingTankToFire selectingTankToFire;
-	SelectingTarget selectingTarget;
-
+public:
 	template<typename T>
-	void exec(T functor);
+	void change_state() {
+		current_state = &(std::get<T>(states));
+	}
 
-public: //TODO: maybe this have to go to a derived class
+	void to_end_state() {
+		current_state = nullptr;
+	}
 
-	//Functions used when transitioning states:
-	void HighlightSelectedTank();
-	void UnhighlightSelectedTank();
-	void IncSelected();
+	template<typename Context, typename Functor>
+	void exec(Context &context, Functor functor)
+	{
+		if(current_state==end_state()) return;
+		current_state->on_exit(context);
 
-	void SelectObjectivesGroup();
-	void HighlightSelectedObjective();
-	void UnhighlightSelectedObjective();
-	void IncSelectedObjective();
-	void AssignDamage();
+		(current_state->*functor)(context);
 
-	//Guards:
-	bool MoreTanksToFireExecuted = false;
-	bool MoreTanksToFire();
+		if(current_state==end_state()) return;
+		current_state->on_enter(context);
+	}
+protected:
+	BaseSate *end_state() {
+		return nullptr;
+	}
+
+
 };
-
-template<typename T>
-void FSM::exec(T functor)
-{
-	if(state==State::end_state()) return;
-	states[state]->on_exit(*this);
-
-	state = (states[state]->*functor)(*this);
-
-	if(state==State::end_state()) return;
-	states[state]->on_enter(*this);
-}
