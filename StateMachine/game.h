@@ -1,31 +1,12 @@
 #pragma once
 
 #include "fsm.h"
-
-class Game;
-
-class SelectingTankToFire: public State
-{
-public:
-	virtual void on_enter(Game &fsm) override;
-	virtual void on_exit(Game &fsm) override;
-	virtual void on_cycle(Game &fsm) override;
-	virtual void on_select(Game &fsm) override;
-};
-
-class SelectingTarget: public State
-{
-public:
-	virtual void on_enter(Game &fsm) override;
-	virtual void on_exit(Game &fsm) override;
-	virtual void on_cycle(Game &fsm) override;
-	virtual void on_select(Game &fsm) override;
-};
+#include "state.h"
 
 class Game
 {
 private:
-	FSM<State, SelectingTankToFire,SelectingTarget> fsm;
+	FSM<State, SelectingTankToFire, SelectingTarget> fsm;
 public:
 	Game() {
 		fsm.change_state<SelectingTankToFire>();
