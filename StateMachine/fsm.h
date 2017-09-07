@@ -20,6 +20,9 @@ private:
 	SelectingTankToFire selectingTankToFire;
 	SelectingTarget selectingTarget;
 
+	template<typename T>
+	void exec(T functor);
+
 public: //TODO: maybe this have to go to a derived class
 
 	//Functions used when transitioning states:
@@ -38,3 +41,14 @@ public: //TODO: maybe this have to go to a derived class
 	bool MoreTanksToFire();
 };
 
+template<typename T>
+void FSM::exec(T functor)
+{
+	if(state==State::end_state()) return;
+	states[state]->on_exit(*this);
+
+	state = (states[state]->*functor)(*this);
+
+	if(state==State::end_state()) return;
+	states[state]->on_enter(*this);
+}

@@ -6,27 +6,14 @@ FSM::FSM(): state(typeid(SelectingTankToFire))
 	states[typeid(SelectingTarget)] = &selectingTarget;
 }
 
-//TODO: repeated code
 void FSM::on_cycle()
 {
-	if(state==State::end_state()) return;
-	states[state]->on_exit(*this);
-
-	state = states[state]->on_cycle(*this);
-
-	if(state==State::end_state()) return;
-	states[state]->on_enter(*this);
+	exec(&State::on_cycle);
 }
 
 void FSM::on_select()
 {
-	if(state==State::end_state()) return;
-	states[state]->on_exit(*this);
-
-	state = states[state]->on_select(*this);
-
-	if(state==State::end_state()) return;
-	states[state]->on_enter(*this);
+	exec(&State::on_select);
 }
 
 
