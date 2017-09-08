@@ -29,9 +29,7 @@ void ATankzGameModeBase::BeginPlay()
 		Spawn(tank, false, GameState);
 	}
 
-	RecalculateActingTanks();
-	SelectedTank=0;
-	ActingTanks[SelectedTank]->SetSelected(true);
+	fsm.change_state<SelectingTankToFire>();
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {
@@ -177,50 +175,67 @@ void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative
 
 void ATankzGameModeBase::OnCycleUp()
 {
-	if(ActingTanks.size()<2) return;
-	
-	ActingTanks[SelectedTank]->SetSelected(false);
-
-	if(SelectedTank==ActingTanks.size()-1)
-		SelectedTank=0;
-	else
-		SelectedTank++;
-
-	ActingTanks[SelectedTank]->SetSelected(true);
+	fsm.exec(*this, &State::on_cycle);
 }
 
 void ATankzGameModeBase::OnCycleDown()
 {
-	if(ActingTanks.size()<2) return;
-	
-	ActingTanks[SelectedTank]->SetSelected(false);
-	
-	if(SelectedTank==0)
-		SelectedTank=ActingTanks.size()-1;
-	else
-		SelectedTank--;
-
-	ActingTanks[SelectedTank]->SetSelected(true);
+	fsm.exec(*this, &State::on_cycle);
 }
 
-bool ATankzGameModeBase::OnAct()
+void ATankzGameModeBase::OnSelect()
 {
-	return MarkThatTheSelectedTankHasActed();
+	fsm.exec(*this, &State::on_select);
 }
 
-bool ATankzGameModeBase::MarkThatTheSelectedTankHasActed()
+void ATankzGameModeBase::HighlightSelectedTank()
 {
-	ActingTanks[SelectedTank]->hasActed = true;
-	ActingTanks[SelectedTank]->SetSelected(false);
-	if(ActingTanks.size()>1) {
-		ActingTanks.erase(ActingTanks.begin()+SelectedTank);
-		if(SelectedTank==ActingTanks.size())
-			SelectedTank=0;
-		ActingTanks[SelectedTank]->SetSelected(true);
-		return false;
+	UE_LOG(LogTemp, Log, TEXT("Executing HighlightSelectedTank"));
+}
+
+void ATankzGameModeBase::UnhighlightSelectedTank()
+{
+	UE_LOG(LogTemp, Log, TEXT("Executing UnhighlightSelectedTank"));
+}
+
+void ATankzGameModeBase::IncSelected()
+{
+	UE_LOG(LogTemp, Log, TEXT("Executing IncSelected"));
+}
+
+
+void ATankzGameModeBase::SelectObjectivesGroup()
+{
+	UE_LOG(LogTemp, Log, TEXT("Executing SelectObjectivesGroup"));
+}
+
+void ATankzGameModeBase::HighlightSelectedObjective()
+{
+	UE_LOG(LogTemp, Log, TEXT("Executing HighlightSelectedObjective"));
+}
+
+void ATankzGameModeBase::UnhighlightSelectedObjective()
+{
+	UE_LOG(LogTemp, Log, TEXT("Executing UnhighlightSelectedObjective"));
+}
+
+void ATankzGameModeBase::IncSelectedObjective()
+{
+	UE_LOG(LogTemp, Log, TEXT("Executing IncSelectedObjective"));
+}
+
+void ATankzGameModeBase::AssignDamage()
+{
+	UE_LOG(LogTemp, Log, TEXT("Executing AssignDamage"));
+}
+
+bool ATankzGameModeBase::MoreTanksToFire()
+{
+	if(!MoreTanksToFireExecuted) {
+		MoreTanksToFireExecuted=true;
+		UE_LOG(LogTemp, Log, TEXT("Returning true from MoreTanksToFire"));
+		return true;
 	}
-	auto hasBeenAStateChange = RecalculateActingTanks();
-	SelectedTank=0;
-	ActingTanks[SelectedTank]->SetSelected(true);
-	return hasBeenAStateChange;
+	UE_LOG(LogTemp, Log, TEXT("Returning false from MoreTanksToFire"));
+	return false;
 }

@@ -37,18 +37,5 @@ void ATankzPlayerController::SetupInputComponent()
 	}
 	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleUp);
 	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleDown);
-	InputComponent->BindAction("Select", IE_Pressed, this, &ATankzPlayerController::OnAct);
-}
-
-void ATankzPlayerController::OnAct() {
-	auto hasBeenAPhaseChange = gameMode->OnAct();
-	if(!hasBeenAPhaseChange) return;
-	auto GameState = GetWorld()->GetGameState<ATankzGameState>();
-	if(TankzPhase_Moving == GameState->CurrentPhase) {
-		dialogueHUD->PhaseText = TEXT("Moving");
-	} else if(TankzPhase_Attacking == GameState->CurrentPhase) {
-		dialogueHUD->PhaseText = TEXT("Attacking");
-	} else {
-		dialogueHUD->PhaseText = TEXT("Command");
-	}
+	InputComponent->BindAction("Select",    IE_Pressed, gameMode, &ATankzGameModeBase::OnSelect);
 }

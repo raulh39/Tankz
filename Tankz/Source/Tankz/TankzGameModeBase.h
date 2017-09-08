@@ -6,6 +6,8 @@
 #include "Data/TankTypeData.h"
 #include <tuple>
 #include <vector>
+#include "FSM/FSM.h"
+#include "FSM/States.h"
 
 #include "TankzGameModeBase.generated.h"
 
@@ -27,9 +29,35 @@ public:
 
 	void OnCycleUp();
 	void OnCycleDown();
-	bool OnAct();  //Will return true if a phase change was necesary
+	void OnSelect();
+
+	template<class T>
+	void change_state() {
+		fsm.change_state<T>();
+	}
+
+	void to_end_state() {
+		fsm.to_end_state();
+	}
+
+	//Used by FSM States:
+	void HighlightSelectedTank();
+	void UnhighlightSelectedTank();
+	void IncSelected();
+
+	void SelectObjectivesGroup();
+	void HighlightSelectedObjective();
+	void UnhighlightSelectedObjective();
+	void IncSelectedObjective();
+	void AssignDamage();
+
+	//Guards:
+	bool MoreTanksToFire();
 
 private:
+	FSM<State, SelectingTankToFire, SelectingTarget> fsm;
+	bool MoreTanksToFireExecuted = false;
+
 	FTankzMapData LoadJson();
 	int FindIndexFor(FString mesh);
 	void Spawn(FTankData tank, bool isAttacker, ATankzGameState*state);
@@ -58,5 +86,4 @@ private:
 	std::tuple<int32,bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);
 
-	bool MarkThatTheSelectedTankHasActed();
 };
