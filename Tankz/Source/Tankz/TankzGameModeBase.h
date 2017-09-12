@@ -44,6 +44,7 @@ public:
 	void HighlightSelectedTank();
 	void UnhighlightSelectedTank();
 	void IncSelected();
+	void ResetAllTanksAndSelectFirstGroupToAct();
 
 	void SelectObjectivesGroup();
 	void HighlightSelectedObjective();
@@ -55,7 +56,7 @@ public:
 	bool MoreTanksToFire();
 
 private:
-	FSM<State, SelectingTankToFire, SelectingTarget> fsm;
+	FSM<State, MoveState> fsm;
 	bool MoreTanksToFireExecuted = false;
 
 	FTankzMapData LoadJson();

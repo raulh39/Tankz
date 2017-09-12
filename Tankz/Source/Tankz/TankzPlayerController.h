@@ -26,5 +26,4 @@ protected:
 private:
 	UInplayUserWidgetBase* dialogueHUD;
 	ATankzGameModeBase *gameMode;
-	void OnAct();
 };

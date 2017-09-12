@@ -29,7 +29,7 @@ void ATankzGameModeBase::BeginPlay()
 		Spawn(tank, false, GameState);
 	}
 
-	fsm.change_state<SelectingTankToFire>();
+	fsm.change_state<MoveState>();
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {
@@ -175,17 +175,17 @@ void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative
 
 void ATankzGameModeBase::OnCycleUp()
 {
-	fsm.exec(*this, &State::on_cycle);
+	fsm.exec(&State::on_cycle, *this);
 }
 
 void ATankzGameModeBase::OnCycleDown()
 {
-	fsm.exec(*this, &State::on_cycle);
+	fsm.exec(&State::on_cycle, *this);
 }
 
 void ATankzGameModeBase::OnSelect()
 {
-	fsm.exec(*this, &State::on_select);
+	fsm.exec(&State::on_select, *this);
 }
 
 void ATankzGameModeBase::HighlightSelectedTank()

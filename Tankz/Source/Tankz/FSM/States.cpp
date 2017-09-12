@@ -1,6 +1,25 @@
 #include "FSM/States.h"
 #include "TankzGameModeBase.h"
 
+
+void MoveState::on_enter(ATankzGameModeBase &game)
+{
+	game.ResetAllTanksAndSelectFirstGroupToAct();
+}
+
+void MoveState::on_cycle(ATankzGameModeBase &game)
+{
+	fsm.exec(&State::on_cycle, *this, game);
+}
+
+void MoveState::on_select(ATankzGameModeBase &game)
+{
+	fsm.exec(&State::on_select, *this, game);
+}
+
+
+
+/*
 void SelectingTankToFire::on_enter(ATankzGameModeBase &game)
 {
 	game.HighlightSelectedTank();
@@ -45,3 +64,4 @@ void SelectingTarget::on_select(ATankzGameModeBase &game)
 	else
 		game.to_end_state();
 }
+*/
