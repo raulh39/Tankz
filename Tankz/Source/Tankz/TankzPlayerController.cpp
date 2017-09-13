@@ -26,6 +26,37 @@ ATankzPlayerController::ATankzPlayerController()
 	}
 }
 
+void ATankzPlayerController::OnCycleUp()
+{
+	gameMode->process_event( EvCycle() );
+}
+
+void ATankzPlayerController::OnCycleDown()
+{
+	gameMode->process_event( EvCycle() );
+}
+
+void ATankzPlayerController::OnSelect()
+{
+	gameMode->process_event( EvSelect() );
+}
+
+void ATankzPlayerController::OnMoveForward(float value)
+{
+}
+
+void ATankzPlayerController::OnMoveRight(float value)
+{
+}
+
+void ATankzPlayerController::OnPanX(float value)
+{
+}
+
+void ATankzPlayerController::OnPanY(float value)
+{
+}
+
 void ATankzPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -35,7 +66,11 @@ void ATankzPlayerController::SetupInputComponent()
 		UE_LOG(LogTemp, Error, TEXT("GameMode is not ATankzGameModeBase class. Aborting."));
 		return;
 	}
-//	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleUp);
-//	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleDown);
-//	InputComponent->BindAction("Select",    IE_Pressed, gameMode, &ATankzGameModeBase::OnSelect);
+	InputComponent->BindAction("CycleUp",   IE_Pressed, this, &ATankzPlayerController::OnCycleUp);
+	InputComponent->BindAction("CycleDown", IE_Pressed, this, &ATankzPlayerController::OnCycleDown);
+	InputComponent->BindAction("Select",    IE_Pressed, this, &ATankzPlayerController::OnSelect);
+	InputComponent->BindAxis("MoveForward", this, &ATankzPlayerController::OnMoveForward);
+	InputComponent->BindAxis("MoveRight", this, &ATankzPlayerController::OnMoveRight);
+	InputComponent->BindAxis("PanX", this, &ATankzPlayerController::OnPanX);
+	InputComponent->BindAxis("PanY", this, &ATankzPlayerController::OnPanY);
 }

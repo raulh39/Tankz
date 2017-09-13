@@ -21,6 +21,14 @@ class TANKZ_API ATankzPlayerController : public APlayerController
 public:
 	ATankzPlayerController();
 	
+	void OnCycleUp();
+	void OnCycleDown();
+	void OnSelect();
+	void OnMoveForward(float value);
+	void OnMoveRight(float value);
+	void OnPanX(float value);
+	void OnPanY(float value);
+
 protected:
 	virtual void SetupInputComponent() override;
 private:
