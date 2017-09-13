@@ -29,6 +29,7 @@ void ATankzGameModeBase::BeginPlay()
 		Spawn(tank, false, GameState);
 	}
 
+	initiate();
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {
@@ -170,4 +171,118 @@ void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative
 		if(!tank->hasActed && tank->CurrentState.initiative == initiative)
 			ActingTanks.push_back(tank);
 	}
+}
+
+void ATankzGameModeBase::AdjustArrowBase(const EvMove&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowBase()"));
+}
+void ATankzGameModeBase::AdjustArrowHead(const EvPan&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowHead()"));
+}
+void ATankzGameModeBase::AdjustTankPosition(const EvMove&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustTankPosition()"));
+}
+void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AssignDamageAndMarkTankHasActed()"));
+}
+void ATankzGameModeBase::CalculateTankCommandActions(const EvSelect&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateTankCommandActions()"));
+}
+void ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed()"));
+}
+void ATankzGameModeBase::IncSelected(const EvCycle&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelected()"));
+}
+void ATankzGameModeBase::IncSelectedAction(const EvCycle&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedAction()"));
+}
+void ATankzGameModeBase::IncSelectedObjective(const EvCycle&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedObjective()"));
+}
+void ATankzGameModeBase::MarkTankHasActed(const EvEsc&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MarkTankHasActed()"));
+}
+void ATankzGameModeBase::SelectObjectivesGroup(const EvSelect&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
+}
+void ATankzGameModeBase::CalculateNextGroup()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateNextGroup()"));
+}
+void ATankzGameModeBase::HighlightSelectedAction()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedAction()"));
+}
+void ATankzGameModeBase::HighlightSelectedObjective()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
+}
+void ATankzGameModeBase::HighlightSelectedTank()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedTank()"));
+}
+void ATankzGameModeBase::PlaceTankOnArrowSide()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PlaceTankOnArrowSide()"));
+}
+void ATankzGameModeBase::PositionArrowBase()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PositionArrowBase()"));
+}
+void ATankzGameModeBase::SetTanksToNotActed()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SetTanksToNotActed()"));
+}
+void ATankzGameModeBase::SpawnArrow()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SpawnArrow()"));
+}
+void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::DeleteArrowAndPlaceMovToken()"));
+}
+void ATankzGameModeBase::UnhighlightSelectedAction()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedAction()"));
+}
+void ATankzGameModeBase::UnhighlightSelectedObjective()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedObjective()"));
+}
+void ATankzGameModeBase::UnhighlightSelectedTank()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedTank()"));
+}
+
+bool ATankzGameModeBase::ASideHasWon()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ASideHasWon()"));
+	return false;
+}
+bool ATankzGameModeBase::MoreMovesLeft()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreMovesLeft()"));
+	return false;
+}
+bool ATankzGameModeBase::MoreTanksInGroup()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreTanksInGroup()"));
+	return false;
+}
+bool ATankzGameModeBase::MoreTanksToAct()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreTanksToAct()"));
+	return false;
 }

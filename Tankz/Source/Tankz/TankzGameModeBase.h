@@ -6,6 +6,7 @@
 #include "Data/TankTypeData.h"
 #include <tuple>
 #include <vector>
+#include "FSM/States.h"
 
 #include "TankzGameModeBase.generated.h"
 
@@ -15,11 +16,12 @@ class ATankzGameState;
  * 
  */
 UCLASS()
-class TANKZ_API ATankzGameModeBase : public AGameModeBase
+class TANKZ_API ATankzGameModeBase : public AGameModeBase, public GameModeStateMachine
 {
 	GENERATED_BODY()
 public:
 	ATankzGameModeBase();
+	~ATankzGameModeBase() { terminate(); }
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
@@ -54,4 +56,39 @@ private:
 	void incrementStatus();
 	std::tuple<int32,bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);
+public:
+	//Functions used by states in transtitions:
+	virtual void AdjustArrowBase(const EvMove&)                            override;
+	virtual void AdjustArrowHead(const EvPan&)                             override;
+	virtual void AdjustTankPosition(const EvMove&)                         override;
+	virtual void AssignDamageAndMarkTankHasActed(const EvSelect&)          override;
+	virtual void CalculateTankCommandActions(const EvSelect&)              override;
+	virtual void ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&) override;
+	virtual void IncSelected(const EvCycle&)                               override;
+	virtual void IncSelectedAction(const EvCycle&)                         override;
+	virtual void IncSelectedObjective(const EvCycle&)                      override;
+	virtual void MarkTankHasActed(const EvEsc&)                            override;
+	virtual void SelectObjectivesGroup(const EvSelect&)                    override;
+
+	//Functions used by states on entry and exit:
+	virtual void CalculateNextGroup()                                      override;
+	virtual void HighlightSelectedAction()                                 override;
+	virtual void HighlightSelectedObjective()                              override;
+	virtual void HighlightSelectedTank()                                   override;
+	virtual void PlaceTankOnArrowSide()                                    override;
+	virtual void PositionArrowBase()                                       override;
+	virtual void SetTanksToNotActed()                                      override;
+	virtual void SpawnArrow()                                              override;
+	virtual void DeleteArrowAndPlaceMovToken()                             override;
+	virtual void UnhighlightSelectedAction()                               override;
+	virtual void UnhighlightSelectedObjective()                            override;
+	virtual void UnhighlightSelectedTank()                                 override;
+
+	//Guards used by states:
+	virtual bool ASideHasWon()      override;
+	virtual bool MoreMovesLeft()    override;
+	virtual bool MoreTanksInGroup() override;
+	virtual bool MoreTanksToAct()   override;
+
+
 };
