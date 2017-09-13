@@ -173,17 +173,17 @@ void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative
 	}
 }
 
-void ATankzGameModeBase::AdjustArrowBase(const EvMove&)
+void ATankzGameModeBase::AdjustArrowBase(const EvMove&ev)
 {
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowBase()"));
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowBase(%.2f,%.2f)"), ev.valueX, ev.valueY);
 }
-void ATankzGameModeBase::AdjustArrowHead(const EvPan&)
+void ATankzGameModeBase::AdjustArrowHead(const EvPan&ev)
 {
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowHead()"));
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowHead(%.2f,%.2f)"), ev.valueX, ev.valueY);
 }
-void ATankzGameModeBase::AdjustTankPosition(const EvMove&)
+void ATankzGameModeBase::AdjustTankPosition(const EvMove&ev)
 {
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustTankPosition()"));
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustTankPosition(%.2f,%.2f)"), ev.valueX, ev.valueY);
 }
 void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
 {

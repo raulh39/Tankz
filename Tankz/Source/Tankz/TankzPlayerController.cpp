@@ -28,12 +28,12 @@ ATankzPlayerController::ATankzPlayerController()
 
 void ATankzPlayerController::OnCycleUp()
 {
-	gameMode->process_event( EvCycle() );
+	gameMode->process_event( EvCycle(true) );
 }
 
 void ATankzPlayerController::OnCycleDown()
 {
-	gameMode->process_event( EvCycle() );
+	gameMode->process_event( EvCycle(false) );
 }
 
 void ATankzPlayerController::OnSelect()
@@ -43,18 +43,26 @@ void ATankzPlayerController::OnSelect()
 
 void ATankzPlayerController::OnMoveForward(float value)
 {
+	if(value>.01f || value < -0.1f)
+		gameMode->process_event( EvMove(value, 0.f) );
 }
 
 void ATankzPlayerController::OnMoveRight(float value)
 {
+	if(value>.01f || value < -0.1f)
+		gameMode->process_event( EvMove(0.f, value) );
 }
 
 void ATankzPlayerController::OnPanX(float value)
 {
+	if(value>.01f || value < -0.1f)
+		gameMode->process_event( EvPan(value, 0.f) );
 }
 
 void ATankzPlayerController::OnPanY(float value)
 {
+	if(value>.01f || value < -0.1f)
+		gameMode->process_event( EvPan(0.f, value) );
 }
 
 void ATankzPlayerController::SetupInputComponent()
