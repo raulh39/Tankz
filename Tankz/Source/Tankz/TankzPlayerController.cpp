@@ -35,7 +35,7 @@ void ATankzPlayerController::SetupInputComponent()
 		UE_LOG(LogTemp, Error, TEXT("GameMode is not ATankzGameModeBase class. Aborting."));
 		return;
 	}
-	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleUp);
-	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleDown);
-	InputComponent->BindAction("Select",    IE_Pressed, gameMode, &ATankzGameModeBase::OnSelect);
+//	InputComponent->BindAction("CycleUp",   IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleUp);
+//	InputComponent->BindAction("CycleDown", IE_Pressed, gameMode, &ATankzGameModeBase::OnCycleDown);
+//	InputComponent->BindAction("Select",    IE_Pressed, gameMode, &ATankzGameModeBase::OnSelect);
 }

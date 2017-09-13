@@ -29,7 +29,6 @@ void ATankzGameModeBase::BeginPlay()
 		Spawn(tank, false, GameState);
 	}
 
-	fsm.change_state<MoveState>();
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {
@@ -171,71 +170,4 @@ void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative
 		if(!tank->hasActed && tank->CurrentState.initiative == initiative)
 			ActingTanks.push_back(tank);
 	}
-}
-
-void ATankzGameModeBase::OnCycleUp()
-{
-	fsm.exec(&State::on_cycle, *this);
-}
-
-void ATankzGameModeBase::OnCycleDown()
-{
-	fsm.exec(&State::on_cycle, *this);
-}
-
-void ATankzGameModeBase::OnSelect()
-{
-	fsm.exec(&State::on_select, *this);
-}
-
-void ATankzGameModeBase::HighlightSelectedTank()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing HighlightSelectedTank"));
-}
-
-void ATankzGameModeBase::UnhighlightSelectedTank()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing UnhighlightSelectedTank"));
-}
-
-void ATankzGameModeBase::IncSelected()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing IncSelected"));
-}
-
-
-void ATankzGameModeBase::SelectObjectivesGroup()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing SelectObjectivesGroup"));
-}
-
-void ATankzGameModeBase::HighlightSelectedObjective()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing HighlightSelectedObjective"));
-}
-
-void ATankzGameModeBase::UnhighlightSelectedObjective()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing UnhighlightSelectedObjective"));
-}
-
-void ATankzGameModeBase::IncSelectedObjective()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing IncSelectedObjective"));
-}
-
-void ATankzGameModeBase::AssignDamage()
-{
-	UE_LOG(LogTemp, Log, TEXT("Executing AssignDamage"));
-}
-
-bool ATankzGameModeBase::MoreTanksToFire()
-{
-	if(!MoreTanksToFireExecuted) {
-		MoreTanksToFireExecuted=true;
-		UE_LOG(LogTemp, Log, TEXT("Returning true from MoreTanksToFire"));
-		return true;
-	}
-	UE_LOG(LogTemp, Log, TEXT("Returning false from MoreTanksToFire"));
-	return false;
 }
