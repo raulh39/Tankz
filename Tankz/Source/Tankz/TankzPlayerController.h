@@ -28,10 +28,15 @@ public:
 	void OnMoveRight(float value);
 	void OnPanX(float value);
 	void OnPanY(float value);
+	void ActivateFloatMode();
+	void DeactivateFloatMode();
 
 protected:
 	virtual void SetupInputComponent() override;
+	virtual void BeginPlay() override;
 private:
 	UInplayUserWidgetBase* dialogueHUD;
 	ATankzGameModeBase *gameMode;
+	bool floatMode;
+	APawn* pawn;
 };

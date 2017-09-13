@@ -8,7 +8,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
 
-ATankzPlayerController::ATankzPlayerController()
+ATankzPlayerController::ATankzPlayerController(): floatMode(false)
 {
 	auto u = LoadObject<UBlueprint>(nullptr, TEXT("/Game/InPlayWidgetBP.InPlayWidgetBP"));
 	if(u == nullptr) {
@@ -23,6 +23,14 @@ ATankzPlayerController::ATankzPlayerController()
 		} else {
 			UE_LOG(LogTemp, Error, TEXT("UInplayUserWidgetBase NOT created"));
 		}
+	}
+}
+
+void ATankzPlayerController::BeginPlay()
+{
+	pawn = GetControlledPawn();
+	if(pawn == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("Controlled pawn not found"));
 	}
 }
 
@@ -43,26 +51,54 @@ void ATankzPlayerController::OnSelect()
 
 void ATankzPlayerController::OnMoveForward(float value)
 {
-	if(value>.01f || value < -0.1f)
+	if(value<.01f && value > -0.1f) return;
+	if(floatMode) {
+		FVector NewLocation(pawn->GetActorLocation());
+		NewLocation.X += value;
+		pawn->SetActorLocation(NewLocation);
+	} else {
 		gameMode->process_event( EvMove(value, 0.f) );
+	}
 }
 
 void ATankzPlayerController::OnMoveRight(float value)
 {
-	if(value>.01f || value < -0.1f)
+	if(value<.01f && value > -0.1f) return;
+	if(floatMode) {
+			
+	} else {
 		gameMode->process_event( EvMove(0.f, value) );
+	}
 }
 
 void ATankzPlayerController::OnPanX(float value)
 {
-	if(value>.01f || value < -0.1f)
+	if(value<.01f && value > -0.1f) return;
+	if(floatMode) {
+			
+	} else {
 		gameMode->process_event( EvPan(value, 0.f) );
+	}
 }
 
 void ATankzPlayerController::OnPanY(float value)
 {
-	if(value>.01f || value < -0.1f)
+	if(value<.01f && value > -0.1f) return;
+	if(floatMode) {
+			
+	} else {
 		gameMode->process_event( EvPan(0.f, value) );
+	}
+}
+
+void ATankzPlayerController::ActivateFloatMode()
+{
+	floatMode = true;
+}
+
+void ATankzPlayerController::DeactivateFloatMode()
+{
+	floatMode = false;
 }
 
 void ATankzPlayerController::SetupInputComponent()
@@ -77,6 +113,9 @@ void ATankzPlayerController::SetupInputComponent()
 	InputComponent->BindAction("CycleUp",   IE_Pressed, this, &ATankzPlayerController::OnCycleUp);
 	InputComponent->BindAction("CycleDown", IE_Pressed, this, &ATankzPlayerController::OnCycleDown);
 	InputComponent->BindAction("Select",    IE_Pressed, this, &ATankzPlayerController::OnSelect);
+	InputComponent->BindAction("FloatMode", IE_Pressed, this, &ATankzPlayerController::ActivateFloatMode);
+	InputComponent->BindAction("FloatMode", IE_Released, this, &ATankzPlayerController::DeactivateFloatMode);
+
 	InputComponent->BindAxis("MoveForward", this, &ATankzPlayerController::OnMoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATankzPlayerController::OnMoveRight);
 	InputComponent->BindAxis("PanX", this, &ATankzPlayerController::OnPanX);
