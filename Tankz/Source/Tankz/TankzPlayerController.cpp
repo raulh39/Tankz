@@ -53,7 +53,15 @@ void ATankzPlayerController::OnMoveForward(float value)
 {
 	if(value<.01f && value > -0.1f) return;
 	if(floatMode) {
+#if 0
 		pawn->MoveForward(value);
+#else
+		FRotator const ControlSpaceRot = GetControlRotation();
+		// transform to world space and add it
+		auto Direction = FRotationMatrix(ControlSpaceRot).GetScaledAxis( EAxis::X );
+		Direction.Z = 0;
+		pawn->AddMovementInput( Direction, value );
+#endif
 	} else {
 		gameMode->process_event( EvMove(value, 0.f) );
 	}
@@ -63,7 +71,15 @@ void ATankzPlayerController::OnMoveRight(float value)
 {
 	if(value<.01f && value > -0.1f) return;
 	if(floatMode) {
+#if 0
 		pawn->MoveRight(value);			
+#else
+		FRotator const ControlSpaceRot = GetControlRotation();
+		// transform to world space and add it
+		auto Direction = FRotationMatrix(ControlSpaceRot).GetScaledAxis( EAxis::Y );
+		Direction.Z = 0;
+		pawn->AddMovementInput( Direction, value );
+#endif
 	} else {
 		gameMode->process_event( EvMove(0.f, value) );
 	}
