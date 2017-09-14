@@ -88,6 +88,8 @@ void ATankzPlayerController::OnMoveRight(float value)
 void ATankzPlayerController::OnMoveUp(float value)
 {
 	if(value<.01f && value > -0.1f) return;
+	if(pawn->GetActorLocation().Z<200 && value < 0.f) return;
+	if(pawn->GetActorLocation().Z>1000 && value > 0.f) return;
 	pawn->MoveUp_World(value);
 }
 
