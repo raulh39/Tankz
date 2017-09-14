@@ -85,6 +85,12 @@ void ATankzPlayerController::OnMoveRight(float value)
 	}
 }
 
+void ATankzPlayerController::OnMoveUp(float value)
+{
+	if(value<.01f && value > -0.1f) return;
+	pawn->MoveUp_World(value);
+}
+
 void ATankzPlayerController::OnPanX(float value)
 {
 	if(value<.01f && value > -0.1f) return;
@@ -132,6 +138,7 @@ void ATankzPlayerController::SetupInputComponent()
 
 	InputComponent->BindAxis("MoveForward", this, &ATankzPlayerController::OnMoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATankzPlayerController::OnMoveRight);
+	InputComponent->BindAxis("MoveUp", this, &ATankzPlayerController::OnMoveUp);
 	InputComponent->BindAxis("PanX", this, &ATankzPlayerController::OnPanX);
 	InputComponent->BindAxis("PanY", this, &ATankzPlayerController::OnPanY);
 }

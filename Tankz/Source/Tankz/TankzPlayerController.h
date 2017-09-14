@@ -26,6 +26,7 @@ public:
 	void OnSelect();
 	void OnMoveForward(float value);
 	void OnMoveRight(float value);
+	void OnMoveUp(float value);
 	void OnPanX(float value);
 	void OnPanY(float value);
 	void ActivateFloatMode();
