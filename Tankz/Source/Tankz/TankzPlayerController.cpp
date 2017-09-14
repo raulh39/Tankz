@@ -28,7 +28,7 @@ ATankzPlayerController::ATankzPlayerController(): floatMode(false)
 
 void ATankzPlayerController::BeginPlay()
 {
-	pawn = GetControlledPawn();
+	pawn = Cast<ADefaultPawn>(GetPawn());
 	if(pawn == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("Controlled pawn not found"));
 	}
@@ -53,9 +53,7 @@ void ATankzPlayerController::OnMoveForward(float value)
 {
 	if(value<.01f && value > -0.1f) return;
 	if(floatMode) {
-		FVector NewLocation(pawn->GetActorLocation());
-		NewLocation.X += value;
-		pawn->SetActorLocation(NewLocation);
+		pawn->MoveForward(value);
 	} else {
 		gameMode->process_event( EvMove(value, 0.f) );
 	}
@@ -65,7 +63,7 @@ void ATankzPlayerController::OnMoveRight(float value)
 {
 	if(value<.01f && value > -0.1f) return;
 	if(floatMode) {
-			
+		pawn->MoveRight(value);			
 	} else {
 		gameMode->process_event( EvMove(0.f, value) );
 	}
@@ -75,7 +73,7 @@ void ATankzPlayerController::OnPanX(float value)
 {
 	if(value<.01f && value > -0.1f) return;
 	if(floatMode) {
-			
+			this->AddYawInput(value);
 	} else {
 		gameMode->process_event( EvPan(value, 0.f) );
 	}
@@ -85,7 +83,7 @@ void ATankzPlayerController::OnPanY(float value)
 {
 	if(value<.01f && value > -0.1f) return;
 	if(floatMode) {
-			
+			this->AddPitchInput(-value);
 	} else {
 		gameMode->process_event( EvPan(0.f, value) );
 	}

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-
+#include "GameFramework/DefaultPawn.h"
 #include "TankzPlayerController.generated.h"
 
 class ATankBase;
@@ -38,5 +38,5 @@ private:
 	UInplayUserWidgetBase* dialogueHUD;
 	ATankzGameModeBase *gameMode;
 	bool floatMode;
-	APawn* pawn;
+	ADefaultPawn* pawn;
 };
