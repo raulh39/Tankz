@@ -11,6 +11,7 @@
 #include "TankzGameModeBase.generated.h"
 
 class ATankzGameState;
+class AArrow;
 
 /**
  * 
@@ -45,6 +46,9 @@ private:
 
 	std::tuple<int32, bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);
+
+	AArrow* arrow;
+
 public:
 	//Functions used by states in transtitions:
 	virtual void AdjustArrowBase(const EvMove&)                            override;

@@ -5,6 +5,7 @@
 #include "Engine/Blueprint.h"
 #include "TankzGameState.h"
 #include "TankzPlayerController.h"
+#include "Actors/Arrow.h"
 
 ATankzGameModeBase::ATankzGameModeBase(): terminating(false)
 {
@@ -50,7 +51,7 @@ void ATankzGameModeBase::BeginPlay()
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {
-	GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, FString::Printf(TEXT("Tank '%s' spawning"), *tank.name));
+	UE_LOG(LogTemp, Log, TEXT("Tank '%s' spawning"), *tank.name);
 
 	FVector translation{ float(tank.position_x), float(tank.position_y), 0.f };
 	FVector Axis{ 0,0,1 };
@@ -209,6 +210,23 @@ void ATankzGameModeBase::IncSelected(const EvCycle&ev)
 	}
 }
 
+//----------------------------------------------------------------------
+// FSM Functions for arrow placement and movement
+//----------------------------------------------------------------------
+void ATankzGameModeBase::SpawnArrow()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SpawnArrow()"));
+	//We need the position of the spline in the selected tank
+
+	FVector translation{ 0.f, 0.f, 0.f };
+	FVector Axis{ 0,0,1 };
+	FRotator rotation{ FQuat(Axis, 0*PI / 180) };
+
+	arrow = GetWorld()->SpawnActor<AArrow>(AArrow::StaticClass(), translation, rotation);
+}
+
+
+
 
 
 
@@ -274,10 +292,6 @@ void ATankzGameModeBase::PlaceTankOnArrowSide()
 void ATankzGameModeBase::PositionArrowBase()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PositionArrowBase()"));
-}
-void ATankzGameModeBase::SpawnArrow()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SpawnArrow()"));
 }
 void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
 {
