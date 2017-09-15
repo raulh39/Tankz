@@ -6,9 +6,21 @@
 #include "TankzGameState.h"
 #include "TankzPlayerController.h"
 
-ATankzGameModeBase::ATankzGameModeBase() {
+ATankzGameModeBase::ATankzGameModeBase(): terminating(false)
+{
 }
 
+ATankzGameModeBase::~ATankzGameModeBase()
+{
+	//When this destructor is being call, nor GameState
+	//nor the pointers stored in ActingTanks can be used.
+	//But the state machine will terminate (even if we don't call
+	//terminate() and all the exit functions will be called.
+	//So we set this variable to true and check the value
+	//in the functions that use GameState or ActingTanks
+	terminating=true;
+	terminate();
+}
 
 //----------------------------------------------------------------------
 // BeginPlay
@@ -90,6 +102,7 @@ int ATankzGameModeBase::FindIndexFor(FString mesh)
 
 void ATankzGameModeBase::SetTanksToNotActed()
 {
+	if(terminating) return;
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SetTanksToNotActed()"));
 
 	for (auto tank : GameState->Attackers) {
@@ -104,7 +117,10 @@ void ATankzGameModeBase::SetTanksToNotActed()
 
 void ATankzGameModeBase::CalculateNextGroup()
 {
+	if(terminating) return;
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateNextGroup()"));
+
+	SelectedTank=0;
 
 	int32 attackersFirstInitiative, defendersFirstInitiative;
 	bool attackersCanAct, defendersCanAct;
@@ -159,8 +175,46 @@ void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative
 	}
 }
 
+//----------------------------------------------------------------------
+// FSM Functions for Highlighting
+//----------------------------------------------------------------------
+void ATankzGameModeBase::HighlightSelectedTank()
+{
+	if(terminating) return;
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedTank()"));
+	ActingTanks[SelectedTank]->SetSelected(true);
+}
+
+void ATankzGameModeBase::UnhighlightSelectedTank()
+{
+	if(terminating) return;
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedTank()"));
+	ActingTanks[SelectedTank]->SetSelected(false);
+}
+
+void ATankzGameModeBase::IncSelected(const EvCycle&ev)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelected()"));
+	if(ev.forward) {
+		++SelectedTank;
+		if(SelectedTank>=ActingTanks.size()) {
+			SelectedTank = 0;
+		}
+	} else {
+		if(SelectedTank==0) {
+			SelectedTank = ActingTanks.size()-1;
+		} else {
+				--SelectedTank;
+		}
+	}
+}
+
+
+
+
 void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 {
+	if(terminating) return;
 	GameState->CurrentPhase = ev.newPhase;
 }
 
@@ -189,10 +243,6 @@ void ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed(const EvSelect
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed()"));
 }
-void ATankzGameModeBase::IncSelected(const EvCycle&)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelected()"));
-}
 void ATankzGameModeBase::IncSelectedAction(const EvCycle&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedAction()"));
@@ -217,10 +267,6 @@ void ATankzGameModeBase::HighlightSelectedObjective()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
 }
-void ATankzGameModeBase::HighlightSelectedTank()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedTank()"));
-}
 void ATankzGameModeBase::PlaceTankOnArrowSide()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PlaceTankOnArrowSide()"));
@@ -244,10 +290,6 @@ void ATankzGameModeBase::UnhighlightSelectedAction()
 void ATankzGameModeBase::UnhighlightSelectedObjective()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedObjective()"));
-}
-void ATankzGameModeBase::UnhighlightSelectedTank()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedTank()"));
 }
 
 bool ATankzGameModeBase::ASideHasWon()

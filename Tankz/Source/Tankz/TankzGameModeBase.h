@@ -21,13 +21,14 @@ class TANKZ_API ATankzGameModeBase : public AGameModeBase, public GameModeStateM
 	GENERATED_BODY()
 public:
 	ATankzGameModeBase();
-	~ATankzGameModeBase() { terminate(); }
+	~ATankzGameModeBase();
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FTankTypeData> TankTypes;
 
 private:
+	bool terminating;
 	ATankzGameState * GameState;
 	FTankzMapData LoadJson();
 	int FindIndexFor(FString mesh);
