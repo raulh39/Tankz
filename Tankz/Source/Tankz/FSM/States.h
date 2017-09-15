@@ -35,34 +35,52 @@ struct SelectActionForTankState;
 class GameModeStateMachine: public sc::state_machine<GameModeStateMachine, MOVINGState>
 {
 public:
-	//Functions used by states in transtitions:
+	/**
+	* This method must mark all tanks (ATankzGameState::Atackers and ATankzGameState::Defenders)
+	* with tank->hasActed = false;
+	*/
+	virtual void SetTanksToNotActed() = 0;
+	/**
+	 * This method will calculate, and store internally, those Tanks that have 
+	 * higher (or lower) initiative depending on the current phase (Moving, 
+	 * Attacking or Command).
+	 * After this function is called, it MUST be safe to call HighlightSelectedTank()
+	 * and IncSelected() because at least one tank should be in the group, so a
+	 * "pointer" to the currently selected tank should also be stored internally.
+	 */
+	virtual void CalculateNextGroup() = 0;
+	/**
+	* This function will highlight the currently selected tank.
+	*/
+	virtual void HighlightSelectedTank() = 0;
+	/**
+	* This function will increment/decrement the "pointer" to the currently selected tank
+	* whith the next tank in the selectable tanks list calculated by CalculateNextGroup().
+	*/
+	virtual void IncSelected(const EvCycle&) = 0;
+
 	virtual void AdjustArrowBase(const EvMove&)                            =0;
 	virtual void AdjustArrowHead(const EvPan&)                             =0;
 	virtual void AdjustTankPosition(const EvMove&)                         =0;
 	virtual void AssignDamageAndMarkTankHasActed(const EvSelect&)          =0;
 	virtual void CalculateTankCommandActions(const EvSelect&)              =0;
 	virtual void ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&) =0;
-	virtual void IncSelected(const EvCycle&)                               =0;
 	virtual void IncSelectedAction(const EvCycle&)                         =0;
 	virtual void IncSelectedObjective(const EvCycle&)                      =0;
 	virtual void MarkTankHasActed(const EvEsc&)                            =0;
 	virtual void SelectObjectivesGroup(const EvSelect&)                    =0;
+	virtual void SwitchPhase(const EvEndPhase&)                            =0;
 
-	//Functions used by states on entry and exit:
-	virtual void CalculateNextGroup()                                      =0;
 	virtual void HighlightSelectedAction()                                 =0;
 	virtual void HighlightSelectedObjective()                              =0;
-	virtual void HighlightSelectedTank()                                   =0;
 	virtual void PlaceTankOnArrowSide()                                    =0;
 	virtual void PositionArrowBase()                                       =0;
-	virtual void SetTanksToNotActed()                                      =0;
 	virtual void SpawnArrow()                                              =0;
 	virtual void DeleteArrowAndPlaceMovToken()                             =0;
 	virtual void UnhighlightSelectedAction()                               =0;
 	virtual void UnhighlightSelectedObjective()                            =0;
 	virtual void UnhighlightSelectedTank()                                 =0;
 
-	//Guards used by states:
 	virtual bool ASideHasWon()      =0;
 	virtual bool MoreMovesLeft()    =0;
 	virtual bool MoreTanksInGroup() =0;
@@ -82,7 +100,7 @@ struct MOVINGState: public sc::state<MOVINGState, GameModeStateMachine,     Movi
 	//Table of:
 	//                Event ->     New state
 	typedef mpl::list<
-		sc::transition<EvEndPhase, FIRINGState>
+		sc::transition<EvEndPhase, FIRINGState, GameModeStateMachine, &GameModeStateMachine::SwitchPhase>
 	> reactions;
 };
 
@@ -103,7 +121,7 @@ struct MovingGroupState: public sc::state<MovingGroupState, MOVINGState,  Select
 		bool moreTanksToAct = context<GameModeStateMachine>().MoreTanksToAct();
 		if(moreTanksToAct)
 			return transit<MovingGroupState>();
-		post_event( EvEndPhase() ); 
+		post_event( EvEndPhase(TankzPhase_Attacking) ); 
 		return discard_event();
 	}
 };
@@ -204,7 +222,7 @@ struct FIRINGState: public sc::state<FIRINGState, GameModeStateMachine,     Firi
 	//Table of:
 	//                Event ->     New state
 	typedef mpl::list<
-		sc::transition<EvEndPhase, COMMANDState>
+		sc::transition<EvEndPhase, COMMANDState, GameModeStateMachine, &GameModeStateMachine::SwitchPhase>
 	> reactions;
 };
 
@@ -225,7 +243,7 @@ struct FiringGroupState: public sc::state<FiringGroupState, FIRINGState,  Select
 		bool moreTanksToAct = context<GameModeStateMachine>().MoreTanksToAct();
 		if(moreTanksToAct)
 			return transit<FiringGroupState>();
-		post_event( EvEndPhase() ); 
+		post_event( EvEndPhase(TankzPhase_Command) ); 
 		return discard_event();
 	}
 };
@@ -295,6 +313,7 @@ struct COMMANDState: public sc::state<COMMANDState, GameModeStateMachine,     Co
 	> reactions;
 
 	sc::result react(const EvEndPhase&evEndPhase) {
+		context<GameModeStateMachine>().SwitchPhase(evEndPhase);
 		bool aSideHasWon = context<GameModeStateMachine>().ASideHasWon();
 		if(!aSideHasWon)
 			return transit<MOVINGState>();
@@ -319,7 +338,7 @@ struct CommandingGroupState: public sc::state<CommandingGroupState, COMMANDState
 		bool moreTanksToAct = context<GameModeStateMachine>().MoreTanksToAct();
 		if(moreTanksToAct)
 			return transit<CommandingGroupState>();
-		post_event( EvEndPhase() ); 
+		post_event( EvEndPhase(TankzPhase_Moving) ); 
 		return discard_event();
 	}
 };

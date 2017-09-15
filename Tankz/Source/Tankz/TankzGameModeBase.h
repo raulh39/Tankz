@@ -28,7 +28,7 @@ public:
 	TArray<FTankTypeData> TankTypes;
 
 private:
-
+	ATankzGameState * GameState;
 	FTankzMapData LoadJson();
 	int FindIndexFor(FString mesh);
 	void Spawn(FTankData tank, bool isAttacker, ATankzGameState*state);
@@ -42,19 +42,7 @@ private:
 	std::vector<ATankBase*> ActingTanks;
 	std::vector<ATankBase*>::size_type SelectedTank;
 
-	/*
-	 * This method will recalculate ActingTanks with those Tanks that have
-	 * higher (or lower) initiative depending on Status.
-	 * Returns:
-	 *     - false: if all tanks has acted, so a change in Status was necesary.
-	 *     - true: otherwise
-	 *  but it will ALWAYS leave ActingTanks with at least one element.
-	 */
-	bool RecalculateActingTanks();
-
-	void resetTanks();
-	void incrementStatus();
-	std::tuple<int32,bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
+	std::tuple<int32, bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);
 public:
 	//Functions used by states in transtitions:
@@ -69,6 +57,7 @@ public:
 	virtual void IncSelectedObjective(const EvCycle&)                      override;
 	virtual void MarkTankHasActed(const EvEsc&)                            override;
 	virtual void SelectObjectivesGroup(const EvSelect&)                    override;
+	virtual void SwitchPhase(const EvEndPhase&)                            override;
 
 	//Functions used by states on entry and exit:
 	virtual void CalculateNextGroup()                                      override;
@@ -89,6 +78,4 @@ public:
 	virtual bool MoreMovesLeft()    override;
 	virtual bool MoreTanksInGroup() override;
 	virtual bool MoreTanksToAct()   override;
-
-
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/statechart/event.hpp>
+#include "TankzGameState.h"
 
 namespace sc = boost::statechart;
 
@@ -16,6 +17,8 @@ struct EvEndGroup: sc::event<EvEndGroup>
 
 struct EvEndPhase: sc::event<EvEndPhase>
 {
+	EvEndPhase(TankzPhase np):newPhase(np) {}
+	TankzPhase newPhase;
 };
 
 struct EvEsc: sc::event<EvEsc>

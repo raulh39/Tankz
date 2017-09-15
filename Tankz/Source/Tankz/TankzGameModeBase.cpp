@@ -9,12 +9,17 @@
 ATankzGameModeBase::ATankzGameModeBase() {
 }
 
+
+//----------------------------------------------------------------------
+// BeginPlay
+//----------------------------------------------------------------------
+
 void ATankzGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	auto GameState = GetGameState<ATankzGameState>();
-	if(!GameState) {
+
+	GameState = GetGameState<ATankzGameState>();
+	if (!GameState) {
 		UE_LOG(LogTemp, Error, TEXT("GameState is not ATankzGameState class. Aborting."));
 		return;
 	}
@@ -22,35 +27,35 @@ void ATankzGameModeBase::BeginPlay()
 
 	FTankzMapData TankzMapData = LoadJson();
 
-	for(auto tank: TankzMapData.attacker) {
+	for (auto tank : TankzMapData.attacker) {
 		Spawn(tank, true, GameState);
 	}
-	for(auto tank: TankzMapData.defender) {
+	for (auto tank : TankzMapData.defender) {
 		Spawn(tank, false, GameState);
 	}
 
-	initiate();
+	initiate(); //Initiates the Finite State Machine base class (GameModeStateMachine)
 }
 
 void ATankzGameModeBase::Spawn(FTankData tank, bool isAttacker, ATankzGameState*state) {
-		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, FString::Printf(TEXT("Tank '%s' spawning"), *tank.name));
+	GEngine->AddOnScreenDebugMessage(-1, -1, FColor::Red, FString::Printf(TEXT("Tank '%s' spawning"), *tank.name));
 
-		FVector translation{float(tank.position_x), float(tank.position_y), 0.f};
-		FVector Axis{0,0,1};
-		FRotator rotation{FQuat(Axis, tank.rotation*PI/180)};
+	FVector translation{ float(tank.position_x), float(tank.position_y), 0.f };
+	FVector Axis{ 0,0,1 };
+	FRotator rotation{ FQuat(Axis, tank.rotation*PI / 180) };
 
-		int index = FindIndexFor(tank.mesh);
+	int index = FindIndexFor(tank.mesh);
 
-		ATankBase* newTank = GetWorld()->SpawnActor<ATankBase>(TankTypes[index].Blueprint, translation, rotation);
-		newTank->InitializeState(tank);
+	ATankBase* newTank = GetWorld()->SpawnActor<ATankBase>(TankTypes[index].Blueprint, translation, rotation);
+	newTank->InitializeState(tank);
 
-		if(isAttacker) {
-			newTank->SetBaseColor(FLinearColor{.5,.05,.05});
-			state->Attackers.Add(newTank);
-		} else {
-			newTank->SetBaseColor(FLinearColor{.05,.05,.5});
-			state->Defenders.Add(newTank);
-		}
+	if (isAttacker) {
+		newTank->SetBaseColor(FLinearColor{ .5,.05,.05 });
+		state->Attackers.Add(newTank);
+	} else {
+		newTank->SetBaseColor(FLinearColor{ .05,.05,.5 });
+		state->Defenders.Add(newTank);
+	}
 }
 
 FTankzMapData ATankzGameModeBase::LoadJson()
@@ -60,7 +65,7 @@ FTankzMapData ATankzGameModeBase::LoadJson()
 	{
 		FString JsonString;
 		const FString fileName = FPaths::Combine(FPaths::GameConfigDir(), TEXT("map.json"));
-		UE_LOG(LogTemp, Log, TEXT("Loading map from file: %s"),*fileName);
+		UE_LOG(LogTemp, Log, TEXT("Loading map from file: %s"), *fileName);
 		FFileHelper::LoadFileToString(JsonString, *fileName);
 
 		FJsonObjectConverter::JsonObjectStringToUStruct<FTankzMapData>(JsonString, &TankzMapData, 0, 0);
@@ -71,95 +76,76 @@ FTankzMapData ATankzGameModeBase::LoadJson()
 
 int ATankzGameModeBase::FindIndexFor(FString mesh)
 {
-	for(int i=0; i<TankTypes.Num();++i) {
-		if(TankTypes[i].Name==mesh)
+	for (int i = 0; i < TankTypes.Num(); ++i) {
+		if (TankTypes[i].Name == mesh)
 			return i;
 	}
 	UE_LOG(LogTemp, Error, TEXT("Mesh actor not found: %s"), *mesh);
 	return 0;
 }
 
-bool ATankzGameModeBase::RecalculateActingTanks()
+//----------------------------------------------------------------------
+// FSM Functions for "acting tanks"
+//----------------------------------------------------------------------
+
+void ATankzGameModeBase::SetTanksToNotActed()
 {
-	auto GameState = GetGameState<ATankzGameState>();
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SetTanksToNotActed()"));
+
+	for (auto tank : GameState->Attackers) {
+		if (tank->isAlive)
+			tank->hasActed = false;
+	}
+	for (auto tank : GameState->Defenders) {
+		if (tank->isAlive)
+			tank->hasActed = false;
+	}
+}
+
+void ATankzGameModeBase::CalculateNextGroup()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateNextGroup()"));
 
 	int32 attackersFirstInitiative, defendersFirstInitiative;
 	bool attackersCanAct, defendersCanAct;
 	std::tie(attackersFirstInitiative, attackersCanAct) = getFirstInitiative(GameState->Attackers);
 	std::tie(defendersFirstInitiative, defendersCanAct) = getFirstInitiative(GameState->Defenders);
-	//UE_LOG(LogTemp, Log, TEXT("Initiatives: %s/%d    %s/%d"), attackersCanAct?TEXT("true"):TEXT("false"), attackersCanAct, defendersCanAct?TEXT("true"):TEXT("false"), defendersFirstInitiative);
-	if(!attackersCanAct && !defendersCanAct) {
-		resetTanks();
-		incrementStatus();
-		RecalculateActingTanks();
-		return true;
-	}
-	if(!defendersCanAct) {
+
+	assert(attackersCanAct || defendersCanAct);
+
+	if (!defendersCanAct) {
 		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
-		return false;
+		return;
 	}
-	if(!attackersCanAct) {
+	if (!attackersCanAct) {
 		SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
-		return false;
+		return;
 	}
-	if( (GameState->CurrentPhase == TankzPhase_Attacking && attackersFirstInitiative >= defendersFirstInitiative) ||
-		(GameState->CurrentPhase != TankzPhase_Attacking && attackersFirstInitiative < defendersFirstInitiative) ) {
+	if ((GameState->CurrentPhase == TankzPhase_Attacking && attackersFirstInitiative >= defendersFirstInitiative) ||
+		(GameState->CurrentPhase != TankzPhase_Attacking && attackersFirstInitiative < defendersFirstInitiative)) {
 		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
-		return false;
+		return;
 	}
 	SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
-	return false;
 }
 
-void ATankzGameModeBase::resetTanks()
+std::tuple<int32, bool> ATankzGameModeBase::getFirstInitiative(TArray<ATankBase*> tanks) const
 {
-	auto GameState = GetGameState<ATankzGameState>();
-
-	for(auto tank: GameState->Attackers) {
-		if(tank->isAlive)
-			tank->hasActed = false;
-	}
-	for(auto tank: GameState->Defenders) {
-		if(tank->isAlive)
-			tank->hasActed = false;
-	}
-}
-
-void ATankzGameModeBase::incrementStatus()
-{
-	auto GameState = GetGameState<ATankzGameState>();
-	switch (GameState->CurrentPhase)
-	{
-	case TankzPhase_Moving:
-		GameState->CurrentPhase = TankzPhase_Attacking;
-		break;
-	case TankzPhase_Attacking:
-		GameState->CurrentPhase = TankzPhase_Command;
-		break;
-	case TankzPhase_Command:
-		GameState->CurrentPhase = TankzPhase_Moving;
-		break;
-	}
-}
-
-std::tuple<int32,bool> ATankzGameModeBase::getFirstInitiative(TArray<ATankBase*> tanks) const
-{
-	auto GameState = GetGameState<ATankzGameState>();
-	if(GameState->CurrentPhase == TankzPhase_Attacking) { //Greater initiative goes first
+	if (GameState->CurrentPhase == TankzPhase_Attacking) { //Greater initiative goes first
 		int32 currentInitiative = -1;
-		for(auto tank: tanks)
-			if(!tank->hasActed && tank->CurrentState.initiative > currentInitiative)
+		for (auto tank : tanks)
+			if (!tank->hasActed && tank->CurrentState.initiative > currentInitiative)
 				currentInitiative = tank->CurrentState.initiative;
-		if(currentInitiative == -1)
+		if (currentInitiative == -1)
 			return std::make_tuple(0, false);
 		return std::make_tuple(currentInitiative, true);
 	}
 	//In all other cases, greater initiative goes last
 	int32 currentInitiative = 1000;
-	for(auto tank: tanks)
-		if(!tank->hasActed && (tank->CurrentState.initiative < currentInitiative))
+	for (auto tank : tanks)
+		if (!tank->hasActed && (tank->CurrentState.initiative < currentInitiative))
 			currentInitiative = tank->CurrentState.initiative;
-	if(currentInitiative == 1000)
+	if (currentInitiative == 1000)
 		return std::make_tuple(0, false);
 	return std::make_tuple(currentInitiative, true);
 }
@@ -167,11 +153,17 @@ std::tuple<int32,bool> ATankzGameModeBase::getFirstInitiative(TArray<ATankBase*>
 void ATankzGameModeBase::SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks)
 {
 	ActingTanks.clear();
-	for(auto tank: tanks) {
-		if(!tank->hasActed && tank->CurrentState.initiative == initiative)
+	for (auto tank : tanks) {
+		if (!tank->hasActed && tank->CurrentState.initiative == initiative)
 			ActingTanks.push_back(tank);
 	}
 }
+
+void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
+{
+	GameState->CurrentPhase = ev.newPhase;
+}
+
 
 void ATankzGameModeBase::AdjustArrowBase(const EvMove&ev)
 {
@@ -217,10 +209,6 @@ void ATankzGameModeBase::SelectObjectivesGroup(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
 }
-void ATankzGameModeBase::CalculateNextGroup()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateNextGroup()"));
-}
 void ATankzGameModeBase::HighlightSelectedAction()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedAction()"));
@@ -240,10 +228,6 @@ void ATankzGameModeBase::PlaceTankOnArrowSide()
 void ATankzGameModeBase::PositionArrowBase()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PositionArrowBase()"));
-}
-void ATankzGameModeBase::SetTanksToNotActed()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SetTanksToNotActed()"));
 }
 void ATankzGameModeBase::SpawnArrow()
 {
