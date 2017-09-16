@@ -48,6 +48,7 @@ private:
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);
 
 	AArrow* arrow;
+	float positionInSplineBorderOfArrowBase;
 
 public:
 	//Functions used by states in transtitions:

@@ -216,15 +216,39 @@ void ATankzGameModeBase::IncSelected(const EvCycle&ev)
 void ATankzGameModeBase::SpawnArrow()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SpawnArrow()"));
+	positionInSplineBorderOfArrowBase = 0.f;
 	//We need the position of the spline in the selected tank
+	auto border = ActingTanks[SelectedTank]->BorderPath;
+	auto translation = border->GetLocationAtDistanceAlongSpline(positionInSplineBorderOfArrowBase, ESplineCoordinateSpace::World);
+	translation.Z = 0.8; //Put arrow above ground
 
-	FVector translation{ 0.f, 0.f, 0.f };
 	FVector Axis{ 0,0,1 };
 	FRotator rotation{ FQuat(Axis, 0*PI / 180) };
 
 	arrow = GetWorld()->SpawnActor<AArrow>(AArrow::StaticClass(), translation, rotation);
 }
 
+void ATankzGameModeBase::AdjustArrowBase(const EvMove&ev)
+{
+	//UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowBase(%.2f,%.2f)"), ev.valueX, ev.valueY);
+	auto border = ActingTanks[SelectedTank]->BorderPath;
+	float border_length = border->GetSplineLength();
+
+	//We treat X and Y movement in the same way: incrementing/decrementing the position of the arrow base in the BorderPath
+	positionInSplineBorderOfArrowBase += ev.valueX;
+	positionInSplineBorderOfArrowBase += ev.valueY;
+
+	//Adjust positionInSplineBorderOfArrowBase in case it goes out of the path:
+	if(positionInSplineBorderOfArrowBase >= border_length) {
+		positionInSplineBorderOfArrowBase -= border_length;
+	} else if(positionInSplineBorderOfArrowBase<0) {
+		positionInSplineBorderOfArrowBase += border_length;
+	}
+
+	auto newPosition = border->GetLocationAtDistanceAlongSpline(positionInSplineBorderOfArrowBase, ESplineCoordinateSpace::World);
+	newPosition.Z = 0.8; //Put arrow above ground
+	arrow->SetActorLocation(newPosition);
+}
 
 
 
@@ -237,10 +261,6 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 }
 
 
-void ATankzGameModeBase::AdjustArrowBase(const EvMove&ev)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowBase(%.2f,%.2f)"), ev.valueX, ev.valueY);
-}
 void ATankzGameModeBase::AdjustArrowHead(const EvPan&ev)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustArrowHead(%.2f,%.2f)"), ev.valueX, ev.valueY);

@@ -10,6 +10,7 @@ AArrow::AArrow()
 	PrimaryActorTick.bCanEverTick = false;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("ArrowMeshComponent");
+	RootComponent = Mesh;
 	auto MeshAsset =  ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/Arrow.Arrow'"));
 	if (MeshAsset.Object != nullptr) {
 		Mesh->SetStaticMesh(MeshAsset.Object);
