@@ -50,6 +50,10 @@ private:
 	AArrow* arrow;
 	float positionInSplineBorderOfArrowBase;
 	FRotator arrowRotation;
+	float tankPositionInArrowXoffset;
+	float tankPositionInArrowYoffset;
+	static constexpr float maxTankPositionInArrowXoffset = 71;
+	static constexpr float minTankPositionInArrowXoffset = 28;
 
 public:
 	//Functions used by states in transtitions:
@@ -58,6 +62,7 @@ public:
 	virtual void AdjustTankPosition(const EvMove&)                         override;
 	virtual void AssignDamageAndMarkTankHasActed(const EvSelect&)          override;
 	virtual void CalculateTankCommandActions(const EvSelect&)              override;
+	virtual void CalculateInitialTankPositionAlongArrow(const EvSelect&)   override;
 	virtual void ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&) override;
 	virtual void IncSelected(const EvCycle&)                               override;
 	virtual void IncSelectedAction(const EvCycle&)                         override;

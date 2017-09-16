@@ -59,6 +59,7 @@ public:
 	*/
 	virtual void IncSelected(const EvCycle&) = 0;
 
+	virtual void CalculateInitialTankPositionAlongArrow(const EvSelect&)   =0;
 	virtual void AdjustArrowBase(const EvMove&)                            =0;
 	virtual void AdjustArrowHead(const EvPan&)                             =0;
 	virtual void AdjustTankPosition(const EvMove&)                         =0;
@@ -183,7 +184,7 @@ struct PlacingArrowState: public sc::state<PlacingArrowState, MovingOneTankState
 	typedef mpl::list<
 		sc::transition<EvMove, PlacingArrowState, GameModeStateMachine, &GameModeStateMachine::AdjustArrowBase>,
 		sc::transition<EvPan,  PlacingArrowState, GameModeStateMachine, &GameModeStateMachine::AdjustArrowHead>,
-		sc::transition<EvSelect, PlacingTankOnArrowState>
+		sc::transition<EvSelect, PlacingTankOnArrowState, GameModeStateMachine, &GameModeStateMachine::CalculateInitialTankPositionAlongArrow>
 	> reactions;
 };
 
