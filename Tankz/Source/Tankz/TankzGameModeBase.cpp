@@ -23,10 +23,10 @@ ATankzGameModeBase::~ATankzGameModeBase()
 	terminate();
 }
 
+
 //----------------------------------------------------------------------
 // BeginPlay
 //----------------------------------------------------------------------
-
 void ATankzGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -342,12 +342,6 @@ void ATankzGameModeBase::MarkTankHasActed(const EvEsc&)
 	ActingTanks[SelectedTank]->hasActed = true;
 }
 
-void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
-{
-	if(terminating) return;
-	GameState->CurrentPhase = ev.newPhase;
-}
-
 bool ATankzGameModeBase::MoreTanksToAct()
 {
 	for (auto tank : GameState->Attackers) {
@@ -365,6 +359,14 @@ bool ATankzGameModeBase::MoreTanksToAct()
 
 	UE_LOG(LogTemp, Log, TEXT("Returning false from MoreTanksToAct()"));
 	return false;
+}
+
+void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
+{
+	if(terminating) return;
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SwitchPhase()"));
+	GameState->CurrentPhase = ev.newPhase;
+	OnPhaseChange.Broadcast(ev.newPhase);
 }
 
 

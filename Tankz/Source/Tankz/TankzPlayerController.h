@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/DefaultPawn.h"
+#include "TankzGameState.h"
+
 #include "TankzPlayerController.generated.h"
 
 class ATankBase;
@@ -32,6 +34,9 @@ public:
 	void OnPanY(float value);
 	void ActivateFloatMode();
 	void DeactivateFloatMode();
+	
+	UFUNCTION()
+	void PhaseChange(TankzPhase newPhase);
 
 protected:
 	virtual void SetupInputComponent() override;

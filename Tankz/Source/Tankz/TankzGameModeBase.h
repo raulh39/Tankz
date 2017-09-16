@@ -7,11 +7,14 @@
 #include <tuple>
 #include <vector>
 #include "FSM/States.h"
+#include "TankzGameState.h"
 
 #include "TankzGameModeBase.generated.h"
 
 class ATankzGameState;
 class AArrow;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPhaseChange, TankzPhase, newPhase);
 
 /**
  * 
@@ -28,7 +31,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FTankTypeData> TankTypes;
 
+
+	FOnPhaseChange OnPhaseChange;
+	
 private:
+	
+
 	bool terminating;
 	ATankzGameState * GameState;
 	FTankzMapData LoadJson();

@@ -32,6 +32,29 @@ void ATankzPlayerController::BeginPlay()
 	if(pawn == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("Controlled pawn not found"));
 	}
+	if(!gameMode) {
+		gameMode = Cast<ATankzGameModeBase>(GetWorld()->GetAuthGameMode());
+		if(!gameMode) {
+			UE_LOG(LogTemp, Error, TEXT("GameMode is not ATankzGameModeBase class. Aborting."));
+			return;
+		}
+	}
+	gameMode->OnPhaseChange.AddDynamic(this, &ATankzPlayerController::PhaseChange);
+}
+
+void ATankzPlayerController::PhaseChange(TankzPhase newPhase)
+{
+	switch(newPhase) {
+	case TankzPhase_Moving:
+		dialogueHUD->PhaseText = TEXT("Moving");
+		break;
+	case TankzPhase_Attacking:
+		dialogueHUD->PhaseText = TEXT("Attacking");
+		break;
+	case TankzPhase_Command:
+		dialogueHUD->PhaseText = TEXT("Command");
+		break;
+	}
 }
 
 void ATankzPlayerController::OnCycleUp()
