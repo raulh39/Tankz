@@ -164,6 +164,7 @@ struct MovingOneTankState: public sc::state<MovingOneTankState, MovingGroupState
 		context<GameModeStateMachine>().MarkTankHasActed(evEsc);
 		bool moreTanksInGroup = context<GameModeStateMachine>().MoreTanksInGroup();
 		if(moreTanksInGroup) {
+			context<GameModeStateMachine>().CalculateNextGroup();
 			return transit<SelectingTankToMoveState>();
 		}
 		post_event( EvEndGroup() ); 

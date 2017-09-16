@@ -314,6 +314,32 @@ bool ATankzGameModeBase::MoreMovesLeft()
 	return true;
 }
 
+void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::DeleteArrowAndPlaceMovToken()"));
+	arrow->Destroy();
+	arrow = nullptr;
+
+	//TODO:  Place movement token!!!!!!!!!!!!!
+}
+
+//----------------------------------------------------------------------
+// FSM Functions for ending MOVING phase
+//----------------------------------------------------------------------
+bool ATankzGameModeBase::MoreTanksInGroup()
+{
+	if(ActingTanks.size() > 1) {
+		UE_LOG(LogTemp, Log, TEXT("Returning true from MoreTanksInGroup()"));
+		return true;
+	}
+	return false;
+}
+
+void ATankzGameModeBase::MarkTankHasActed(const EvEsc&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MarkTankHasActed()"));
+	ActingTanks[SelectedTank]->hasActed = true;
+}
 
 void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 {
@@ -321,7 +347,16 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 	GameState->CurrentPhase = ev.newPhase;
 }
 
+bool ATankzGameModeBase::MoreTanksToAct()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreTanksToAct()"));
+	return false;
+}
 
+
+//----------------------------------------------------------------------
+// FSM Functions TBD
+//----------------------------------------------------------------------
 void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AssignDamageAndMarkTankHasActed()"));
@@ -342,10 +377,6 @@ void ATankzGameModeBase::IncSelectedObjective(const EvCycle&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedObjective()"));
 }
-void ATankzGameModeBase::MarkTankHasActed(const EvEsc&)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MarkTankHasActed()"));
-}
 void ATankzGameModeBase::SelectObjectivesGroup(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
@@ -357,10 +388,6 @@ void ATankzGameModeBase::HighlightSelectedAction()
 void ATankzGameModeBase::HighlightSelectedObjective()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
-}
-void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::DeleteArrowAndPlaceMovToken()"));
 }
 void ATankzGameModeBase::UnhighlightSelectedAction()
 {
@@ -374,15 +401,5 @@ void ATankzGameModeBase::UnhighlightSelectedObjective()
 bool ATankzGameModeBase::ASideHasWon()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ASideHasWon()"));
-	return false;
-}
-bool ATankzGameModeBase::MoreTanksInGroup()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreTanksInGroup()"));
-	return false;
-}
-bool ATankzGameModeBase::MoreTanksToAct()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreTanksToAct()"));
 	return false;
 }
