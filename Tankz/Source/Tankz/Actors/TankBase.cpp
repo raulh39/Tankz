@@ -9,6 +9,22 @@ ATankBase::ATankBase(): hasActed{false}, isAlive{true}
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BorderPath = CreateDefaultSubobject<USplineComponent>("BorderPath");
+	RootComponent = BorderPath;
+	FVector splinePointPosition1{ -24.f,  16.f, 0.f };
+	FVector splinePointPosition2{  26.f,  16.f, 0.f };
+	FVector splinePointPosition3{  26.f, -15.f, 0.f };
+	FVector splinePointPosition4{ -24.f, -15.f, 0.f };
+	BorderPath->ClearSplinePoints(false);
+	BorderPath->AddSplineLocalPoint(splinePointPosition1);
+	BorderPath->SetSplinePointType(0, ESplinePointType::Linear, false);
+	BorderPath->AddSplineLocalPoint(splinePointPosition2);
+	BorderPath->SetSplinePointType(1, ESplinePointType::Linear, false);
+	BorderPath->AddSplineLocalPoint(splinePointPosition3);
+	BorderPath->SetSplinePointType(2, ESplinePointType::Linear, false);
+	BorderPath->AddSplineLocalPoint(splinePointPosition4);
+	BorderPath->SetSplinePointType(3, ESplinePointType::Linear, false);
+	BorderPath->SetClosedLoop(true);
 }
 
 // Called when the game starts or when spawned

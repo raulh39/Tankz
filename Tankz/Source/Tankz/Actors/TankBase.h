@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Data/TankData.h"
-
+#include <Components/SplineComponent.h>
 #include "TankBase.generated.h"
 
 UCLASS()
@@ -27,6 +27,9 @@ public:
 	FTankState InitialState;
 	UPROPERTY(BlueprintReadOnly, Category = "Tankz")
 	FTankState CurrentState;
+	
+	UPROPERTY(EditAnywhere, Category = "Tankz")
+	USplineComponent* BorderPath;
 
 	void InitializeState(FTankData &state) {
 		InitialState = state;
