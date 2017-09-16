@@ -332,6 +332,7 @@ bool ATankzGameModeBase::MoreTanksInGroup()
 		UE_LOG(LogTemp, Log, TEXT("Returning true from MoreTanksInGroup()"));
 		return true;
 	}
+	UE_LOG(LogTemp, Log, TEXT("Returning false from MoreTanksInGroup()"));
 	return false;
 }
 
@@ -349,7 +350,20 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 
 bool ATankzGameModeBase::MoreTanksToAct()
 {
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreTanksToAct()"));
+	for (auto tank : GameState->Attackers) {
+		if (!tank->hasActed) {
+			UE_LOG(LogTemp, Log, TEXT("Returning true from MoreTanksToAct()"));
+			return true;
+		}
+	}
+	for (auto tank : GameState->Defenders) {
+		if (!tank->hasActed) {
+			UE_LOG(LogTemp, Log, TEXT("Returning true from MoreTanksToAct()"));
+			return true;
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("Returning false from MoreTanksToAct()"));
 	return false;
 }
 

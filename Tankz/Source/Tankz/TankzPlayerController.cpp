@@ -49,6 +49,11 @@ void ATankzPlayerController::OnSelect()
 	gameMode->process_event( EvSelect() );
 }
 
+void ATankzPlayerController::OnEsc()
+{
+	gameMode->process_event( EvEsc() );
+}
+
 void ATankzPlayerController::OnMoveForward(float value)
 {
 	if(value<.01f && value > -0.1f) return;
@@ -135,6 +140,7 @@ void ATankzPlayerController::SetupInputComponent()
 	InputComponent->BindAction("CycleUp",   IE_Pressed, this, &ATankzPlayerController::OnCycleUp);
 	InputComponent->BindAction("CycleDown", IE_Pressed, this, &ATankzPlayerController::OnCycleDown);
 	InputComponent->BindAction("Select",    IE_Pressed, this, &ATankzPlayerController::OnSelect);
+	InputComponent->BindAction("Esc",   IE_Pressed, this, &ATankzPlayerController::OnEsc);
 	InputComponent->BindAction("FloatMode", IE_Pressed, this, &ATankzPlayerController::ActivateFloatMode);
 	InputComponent->BindAction("FloatMode", IE_Released, this, &ATankzPlayerController::DeactivateFloatMode);
 

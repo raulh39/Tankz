@@ -24,6 +24,7 @@ public:
 	void OnCycleUp();
 	void OnCycleDown();
 	void OnSelect();
+	void OnEsc();
 	void OnMoveForward(float value);
 	void OnMoveRight(float value);
 	void OnMoveUp(float value);
