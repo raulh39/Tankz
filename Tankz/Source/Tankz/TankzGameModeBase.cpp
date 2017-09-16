@@ -228,6 +228,18 @@ void ATankzGameModeBase::SpawnArrow()
 	arrowRotation = FRotator{ FQuat(Axis, 0) };
 
 	arrow = GetWorld()->SpawnActor<AArrow>(AArrow::StaticClass(), translation, arrowRotation);
+
+	//When the arrow is spawned, the tank hasn't move yet, so we have to
+	//reset to 0 its number of moves:
+	ActingTanks[SelectedTank]->movesDone = 0;
+}
+
+void ATankzGameModeBase::PositionArrowBase()
+{
+	auto border = ActingTanks[SelectedTank]->BorderPath;
+	auto newPosition = border->GetLocationAtDistanceAlongSpline(positionInSplineBorderOfArrowBase, ESplineCoordinateSpace::World);
+	newPosition.Z = 0.8; //Put arrow above ground
+	arrow->SetActorLocation(newPosition);
 }
 
 void ATankzGameModeBase::AdjustArrowBase(const EvMove&ev)
@@ -247,9 +259,6 @@ void ATankzGameModeBase::AdjustArrowBase(const EvMove&ev)
 		positionInSplineBorderOfArrowBase += border_length;
 	}
 
-	auto newPosition = border->GetLocationAtDistanceAlongSpline(positionInSplineBorderOfArrowBase, ESplineCoordinateSpace::World);
-	newPosition.Z = 0.8; //Put arrow above ground
-	arrow->SetActorLocation(newPosition);
 }
 
 void ATankzGameModeBase::AdjustArrowHead(const EvPan&ev)
@@ -266,6 +275,8 @@ void ATankzGameModeBase::CalculateInitialTankPositionAlongArrow(const EvSelect&)
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateInitialTankPositionAlongArrow()"));
 	tankPositionInArrowXoffset = minTankPositionInArrowXoffset;
 	tankPositionInArrowYoffset = 22.f;
+	
+	ActingTanks[SelectedTank]->movesDone++;
 }
 
 void ATankzGameModeBase::AdjustTankPosition(const EvMove&ev)
@@ -292,6 +303,16 @@ void ATankzGameModeBase::PlaceTankOnArrowSide()
 	ActingTanks[SelectedTank]->AddActorLocalOffset(FVector(tankPositionInArrowXoffset, tankPositionInArrowYoffset, 0.f));
 }
 
+bool ATankzGameModeBase::MoreMovesLeft()
+{
+	if(ActingTanks[SelectedTank]->movesDone >= 2) {
+		UE_LOG(LogTemp, Log, TEXT("Returning false from MoreMovesLeft()"));
+		return false;
+	}
+	positionInSplineBorderOfArrowBase = 0.f;
+	UE_LOG(LogTemp, Log, TEXT("Returning true from MoreMovesLeft()"));
+	return true;
+}
 
 
 void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
@@ -337,10 +358,6 @@ void ATankzGameModeBase::HighlightSelectedObjective()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
 }
-void ATankzGameModeBase::PositionArrowBase()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PositionArrowBase()"));
-}
 void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::DeleteArrowAndPlaceMovToken()"));
@@ -357,11 +374,6 @@ void ATankzGameModeBase::UnhighlightSelectedObjective()
 bool ATankzGameModeBase::ASideHasWon()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ASideHasWon()"));
-	return false;
-}
-bool ATankzGameModeBase::MoreMovesLeft()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MoreMovesLeft()"));
 	return false;
 }
 bool ATankzGameModeBase::MoreTanksInGroup()

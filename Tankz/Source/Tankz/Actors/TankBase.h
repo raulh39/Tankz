@@ -38,6 +38,7 @@ public:
 
 	bool hasActed;
 	bool isAlive;
+	int movesDone;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
