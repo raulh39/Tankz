@@ -49,6 +49,7 @@ private:
 
 	AArrow* arrow;
 	float positionInSplineBorderOfArrowBase;
+	FRotator arrowRotation;
 
 public:
 	//Functions used by states in transtitions:
