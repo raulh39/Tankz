@@ -283,17 +283,6 @@ void ATankzGameModeBase::CalculateInitialTankPositionAlongArrow(const EvSelect&)
 	ActingTanks[SelectedTank]->movesDone++;
 }
 
-void ATankzGameModeBase::AdjustTankPosition(const EvMove&ev)
-{
-	//UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustTankPosition(%.2f,%.2f)"), ev.valueX, ev.valueY);
-	if(ev.valueY < 0 && tankPositionInArrowYoffset > 0) tankPositionInArrowYoffset=-tankPositionInArrowYoffset;
-	if(ev.valueY > 0 && tankPositionInArrowYoffset < 0) tankPositionInArrowYoffset=-tankPositionInArrowYoffset;
-	tankPositionInArrowXoffset += ev.valueX;
-	//UE_LOG(LogTemp, Log, TEXT("tankPositionInArrowXoffset: %.2f"), tankPositionInArrowXoffset);
-	if(tankPositionInArrowXoffset < minTankPositionInArrowXoffset) tankPositionInArrowXoffset = minTankPositionInArrowXoffset;
-	if(tankPositionInArrowXoffset > maxTankPositionInArrowXoffset) tankPositionInArrowXoffset = maxTankPositionInArrowXoffset;
-}
-
 void ATankzGameModeBase::PlaceTankOnArrowSide()
 {
 	//UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PlaceTankOnArrowSide()"));
@@ -305,6 +294,17 @@ void ATankzGameModeBase::PlaceTankOnArrowSide()
 	FTransform newTransform{arrowRotation, newLocation, oldTransform.GetScale3D()};
 	ActingTanks[SelectedTank]->SetActorTransform(newTransform);
 	ActingTanks[SelectedTank]->AddActorLocalOffset(FVector(tankPositionInArrowXoffset, tankPositionInArrowYoffset, 0.f));
+}
+
+void ATankzGameModeBase::AdjustTankPosition(const EvMove&ev)
+{
+	//UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustTankPosition(%.2f,%.2f)"), ev.valueX, ev.valueY);
+	if(ev.valueY < 0 && tankPositionInArrowYoffset > 0) tankPositionInArrowYoffset=-tankPositionInArrowYoffset;
+	if(ev.valueY > 0 && tankPositionInArrowYoffset < 0) tankPositionInArrowYoffset=-tankPositionInArrowYoffset;
+	tankPositionInArrowXoffset += ev.valueX;
+	//UE_LOG(LogTemp, Log, TEXT("tankPositionInArrowXoffset: %.2f"), tankPositionInArrowXoffset);
+	if(tankPositionInArrowXoffset < minTankPositionInArrowXoffset) tankPositionInArrowXoffset = minTankPositionInArrowXoffset;
+	if(tankPositionInArrowXoffset > maxTankPositionInArrowXoffset) tankPositionInArrowXoffset = maxTankPositionInArrowXoffset;
 }
 
 bool ATankzGameModeBase::MoreMovesLeft()

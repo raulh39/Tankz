@@ -4,6 +4,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "Data/TankzMapData.h"
 #include "Data/TankTypeData.h"
+#include "Data/PositionInArrowInfo.h"
 #include <tuple>
 #include <vector>
 #include "FSM/States.h"
