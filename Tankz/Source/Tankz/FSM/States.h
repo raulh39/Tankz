@@ -23,6 +23,7 @@ struct FIRINGState;
 struct FiringGroupState;
 struct SelectingTankToFireState;
 struct SelectingTargetState;
+struct ChoosingObjectiveState;
 
 struct COMMANDState;
 struct CommandingGroupState;
@@ -69,8 +70,8 @@ public:
 	virtual void IncSelectedAction(const EvCycle&)                         =0;
 	virtual void IncSelectedObjective(const EvCycle&)                      =0;
 	virtual void MarkTankHasActed(const EvEsc&)                            =0;
-	virtual void SelectObjectivesGroup(const EvSelect&)                    =0;
 	virtual void SwitchPhase(const EvEndPhase&)                            =0;
+	virtual void TurnTank90Degrees(const EvCycle&)                         =0;
 
 	virtual void HighlightSelectedAction()                                 =0;
 	virtual void HighlightSelectedObjective()                              =0;
@@ -81,6 +82,8 @@ public:
 	virtual void UnhighlightSelectedAction()                               =0;
 	virtual void UnhighlightSelectedObjective()                            =0;
 	virtual void UnhighlightSelectedTank()                                 =0;
+	virtual void SelectObjectivesGroup()                                   =0;
+	virtual void UnselectObjectivesGroup()                                 =0;
 
 	virtual bool ASideHasWon()      =0;
 	virtual bool MoreMovesLeft()    =0;
@@ -198,8 +201,9 @@ struct PlacingTankOnArrowState: public sc::state<PlacingTankOnArrowState, Moving
 	//Table of:
 	//                Event ->  New state          [Trigger function context,  Trigger function]
 	typedef mpl::list<
-		sc::transition<EvMove, PlacingTankOnArrowState, GameModeStateMachine, &GameModeStateMachine::AdjustTankPosition>,
-		sc::transition<EvPan,  PlacingTankOnArrowState, GameModeStateMachine, &GameModeStateMachine::AdjustArrowHead>,
+		sc::transition<EvMove,  PlacingTankOnArrowState, GameModeStateMachine, &GameModeStateMachine::AdjustTankPosition>,
+		sc::transition<EvPan,   PlacingTankOnArrowState, GameModeStateMachine, &GameModeStateMachine::AdjustArrowHead>,
+		sc::transition<EvCycle, PlacingTankOnArrowState, GameModeStateMachine, &GameModeStateMachine::TurnTank90Degrees>,
 		sc::custom_reaction<EvSelect>
 	> reactions;
 
@@ -264,25 +268,24 @@ struct SelectingTankToFireState: public sc::state<SelectingTankToFireState, Firi
 	//                Event ->  New state          [Trigger function context,  Trigger function]
 	typedef mpl::list<
 		sc::transition<EvCycle, SelectingTankToFireState, GameModeStateMachine, &GameModeStateMachine::IncSelected>,
-		sc::transition<EvSelect, SelectingTargetState   , GameModeStateMachine, &GameModeStateMachine::SelectObjectivesGroup>
+		sc::transition<EvSelect, ChoosingObjectiveState>
 	> reactions;
 };
 
-//                                            CRTP                      Outter state
-struct SelectingTargetState: public sc::state<SelectingTargetState, FiringGroupState>
+//                                              CRTP                    Outter state     Initial state
+struct ChoosingObjectiveState: public sc::state<ChoosingObjectiveState, FiringGroupState, SelectingTargetState>
 {
-	SelectingTargetState(my_context ctx): my_base(ctx) {
-		context<GameModeStateMachine>().HighlightSelectedObjective();
+	ChoosingObjectiveState(my_context ctx): my_base(ctx) {
+		context<GameModeStateMachine>().SelectObjectivesGroup();
 	}
-	~SelectingTargetState() {
-		context<GameModeStateMachine>().UnhighlightSelectedObjective();
+	~ChoosingObjectiveState() {
+		context<GameModeStateMachine>().UnselectObjectivesGroup();
 	}
 
 	//Table of:
 	//                Event ->  New state          [Trigger function context,  Trigger function]
 	typedef mpl::list<
-		sc::transition<EvCycle, SelectingTargetState, GameModeStateMachine, &GameModeStateMachine::IncSelectedObjective>,
-		sc::transition<EvEsc,   SelectingTankToFireState>,
+		sc::transition<EvEsc,    SelectingTankToFireState>,
 		sc::custom_reaction<EvSelect>
 	> reactions;
 
@@ -294,6 +297,23 @@ struct SelectingTargetState: public sc::state<SelectingTargetState, FiringGroupS
 		post_event( EvEndGroup() );
 		return discard_event();
 	}
+};
+
+//                                            CRTP                  Outter state
+struct SelectingTargetState: public sc::state<SelectingTargetState, ChoosingObjectiveState>
+{
+	SelectingTargetState(my_context ctx): my_base(ctx) {
+		context<GameModeStateMachine>().HighlightSelectedObjective();
+	}
+	~SelectingTargetState() {
+		context<GameModeStateMachine>().UnhighlightSelectedObjective();
+	}
+
+	//Table of:
+	//                Event ->  New state          [Trigger function context,  Trigger function]
+	typedef mpl::list<
+		sc::transition<EvCycle, SelectingTargetState, GameModeStateMachine, &GameModeStateMachine::IncSelectedObjective>
+	> reactions;
 
 };
 

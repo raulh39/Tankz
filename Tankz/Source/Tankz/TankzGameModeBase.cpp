@@ -327,6 +327,11 @@ void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
 	//TODO:  Place movement token!!!!!!!!!!!!!
 }
 
+void ATankzGameModeBase::TurnTank90Degrees(const EvCycle&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::TurnTank90Degrees()"));
+}
+
 //----------------------------------------------------------------------
 // FSM Functions for ending MOVING phase
 //----------------------------------------------------------------------
@@ -377,6 +382,16 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 //----------------------------------------------------------------------
 // FSM Functions TBD
 //----------------------------------------------------------------------
+void ATankzGameModeBase::SelectObjectivesGroup()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
+}
+
+void ATankzGameModeBase::UnselectObjectivesGroup()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnselectObjectivesGroup()"));
+}
+
 void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AssignDamageAndMarkTankHasActed()"));
@@ -396,10 +411,6 @@ void ATankzGameModeBase::IncSelectedAction(const EvCycle&)
 void ATankzGameModeBase::IncSelectedObjective(const EvCycle&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedObjective()"));
-}
-void ATankzGameModeBase::SelectObjectivesGroup(const EvSelect&)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
 }
 void ATankzGameModeBase::HighlightSelectedAction()
 {

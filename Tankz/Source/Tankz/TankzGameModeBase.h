@@ -76,8 +76,8 @@ public:
 	virtual void IncSelectedAction(const EvCycle&)                         override;
 	virtual void IncSelectedObjective(const EvCycle&)                      override;
 	virtual void MarkTankHasActed(const EvEsc&)                            override;
-	virtual void SelectObjectivesGroup(const EvSelect&)                    override;
 	virtual void SwitchPhase(const EvEndPhase&)                            override;
+	virtual void TurnTank90Degrees(const EvCycle&)                         override;
 
 	//Functions used by states on entry and exit:
 	virtual void CalculateNextGroup()                                      override;
@@ -92,6 +92,8 @@ public:
 	virtual void UnhighlightSelectedAction()                               override;
 	virtual void UnhighlightSelectedObjective()                            override;
 	virtual void UnhighlightSelectedTank()                                 override;
+	virtual void SelectObjectivesGroup()                                   override;
+	virtual void UnselectObjectivesGroup()                                 override;
 
 	//Guards used by states:
 	virtual bool ASideHasWon()      override;
