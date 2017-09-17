@@ -216,18 +216,22 @@ void ATankzGameModeBase::IncSelected(const EvCycle&ev)
 void ATankzGameModeBase::SpawnArrow()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SpawnArrow()"));
-	
-	positionInSplineBorderOfArrowBase = 0.f;
 
 	//We need the position of the spline in the selected tank
 	auto border = ActingTanks[SelectedTank]->BorderPath;
-	auto translation = border->GetLocationAtDistanceAlongSpline(positionInSplineBorderOfArrowBase, ESplineCoordinateSpace::World);
-	translation.Z = 0.8; //Put arrow above ground
+	float border_length = border->GetSplineLength();
+	
+	positionInSplineBorderOfArrowBase = 60.f;
 
-	FVector Axis{ 0,0,1 };
-	arrowRotation = FRotator{ FQuat(Axis, 0) };
+	auto location = border->GetLocationAtDistanceAlongSpline(positionInSplineBorderOfArrowBase, ESplineCoordinateSpace::World);
+	location.Z = 0.8; //Put arrow above ground
 
-	arrow = GetWorld()->SpawnActor<AArrow>(AArrow::StaticClass(), translation, arrowRotation);
+	FVector map_center{ 0, 0, location.Z };
+	auto r = (map_center-location);
+	r.Normalize();
+	arrowRotation = r.Rotation();
+
+	arrow = GetWorld()->SpawnActor<AArrow>(AArrow::StaticClass(), location, arrowRotation);
 
 	//When the arrow is spawned, the tank hasn't move yet, so we have to
 	//reset to 0 its number of moves:
@@ -292,7 +296,7 @@ void ATankzGameModeBase::AdjustTankPosition(const EvMove&ev)
 
 void ATankzGameModeBase::PlaceTankOnArrowSide()
 {
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PlaceTankOnArrowSide()"));
+	//UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::PlaceTankOnArrowSide()"));
 	FTransform oldTransform = ActingTanks[SelectedTank]->GetActorTransform();
 	float x = arrow->GetActorTransform().GetLocation().X;
 	float y = arrow->GetActorTransform().GetLocation().Y;
@@ -309,7 +313,7 @@ bool ATankzGameModeBase::MoreMovesLeft()
 		UE_LOG(LogTemp, Log, TEXT("Returning false from MoreMovesLeft()"));
 		return false;
 	}
-	positionInSplineBorderOfArrowBase = 0.f;
+	positionInSplineBorderOfArrowBase = 60.f;
 	UE_LOG(LogTemp, Log, TEXT("Returning true from MoreMovesLeft()"));
 	return true;
 }
