@@ -211,7 +211,7 @@ void ATankzGameModeBase::IncSelected(const EvCycle&ev)
 }
 
 //----------------------------------------------------------------------
-// FSM Functions for arrow and tank placement and movement
+// FSM Functions for arrow placement
 //----------------------------------------------------------------------
 void ATankzGameModeBase::SpawnArrow()
 {
@@ -238,6 +238,15 @@ void ATankzGameModeBase::SpawnArrow()
 	ActingTanks[SelectedTank]->movesDone = 0;
 }
 
+void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::DeleteArrowAndPlaceMovToken()"));
+	arrow->Destroy();
+	arrow = nullptr;
+
+	//TODO:  Place movement token!!!!!!!!!!!!!
+}
+
 void ATankzGameModeBase::PositionArrowBase()
 {
 	auto border = ActingTanks[SelectedTank]->BorderPath;
@@ -262,7 +271,6 @@ void ATankzGameModeBase::AdjustArrowBase(const EvMove&ev)
 	} else if(positionInSplineBorderOfArrowBase<0) {
 		positionInSplineBorderOfArrowBase += border_length;
 	}
-
 }
 
 void ATankzGameModeBase::AdjustArrowHead(const EvPan&ev)
@@ -274,11 +282,13 @@ void ATankzGameModeBase::AdjustArrowHead(const EvPan&ev)
 	arrow->SetActorRotation(arrowRotation);
 }
 
+//----------------------------------------------------------------------
+// FSM Functions for tank placement in arrow
+//----------------------------------------------------------------------
 void ATankzGameModeBase::CalculateInitialTankPositionAlongArrow(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateInitialTankPositionAlongArrow()"));
-	tankPositionInArrowXoffset = minTankPositionInArrowXoffset;
-	tankPositionInArrowYoffset = 22.f;
+	positionInArrowInfo = PositionInArrowInfo();
 	
 	ActingTanks[SelectedTank]->movesDone++;
 }
@@ -293,18 +303,17 @@ void ATankzGameModeBase::PlaceTankOnArrowSide()
 	FVector newLocation{x,y,z};
 	FTransform newTransform{arrowRotation, newLocation, oldTransform.GetScale3D()};
 	ActingTanks[SelectedTank]->SetActorTransform(newTransform);
-	ActingTanks[SelectedTank]->AddActorLocalOffset(FVector(tankPositionInArrowXoffset, tankPositionInArrowYoffset, 0.f));
+	ActingTanks[SelectedTank]->AddActorLocalOffset(positionInArrowInfo.getArrowOffset());
+	ActingTanks[SelectedTank]->AddActorLocalRotation(positionInArrowInfo.getRotation());
 }
 
 void ATankzGameModeBase::AdjustTankPosition(const EvMove&ev)
 {
 	//UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AdjustTankPosition(%.2f,%.2f)"), ev.valueX, ev.valueY);
-	if(ev.valueY < 0 && tankPositionInArrowYoffset > 0) tankPositionInArrowYoffset=-tankPositionInArrowYoffset;
-	if(ev.valueY > 0 && tankPositionInArrowYoffset < 0) tankPositionInArrowYoffset=-tankPositionInArrowYoffset;
-	tankPositionInArrowXoffset += ev.valueX;
-	//UE_LOG(LogTemp, Log, TEXT("tankPositionInArrowXoffset: %.2f"), tankPositionInArrowXoffset);
-	if(tankPositionInArrowXoffset < minTankPositionInArrowXoffset) tankPositionInArrowXoffset = minTankPositionInArrowXoffset;
-	if(tankPositionInArrowXoffset > maxTankPositionInArrowXoffset) tankPositionInArrowXoffset = maxTankPositionInArrowXoffset;
+	if(ev.valueY < 0) positionInArrowInfo.ToSide(Side::Left);
+	if(ev.valueY > 0) positionInArrowInfo.ToSide(Side::Right);
+	
+	positionInArrowInfo.ChangeDeltaX(ev.valueX);
 }
 
 bool ATankzGameModeBase::MoreMovesLeft()
@@ -318,18 +327,10 @@ bool ATankzGameModeBase::MoreMovesLeft()
 	return true;
 }
 
-void ATankzGameModeBase::DeleteArrowAndPlaceMovToken()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::DeleteArrowAndPlaceMovToken()"));
-	arrow->Destroy();
-	arrow = nullptr;
-
-	//TODO:  Place movement token!!!!!!!!!!!!!
-}
-
-void ATankzGameModeBase::TurnTank90Degrees(const EvCycle&)
+void ATankzGameModeBase::TurnTank90Degrees(const EvCycle&ev)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::TurnTank90Degrees()"));
+	positionInArrowInfo.ChangeRotation(ev.forward);
 }
 
 //----------------------------------------------------------------------

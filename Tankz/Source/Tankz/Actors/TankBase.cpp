@@ -11,10 +11,11 @@ ATankBase::ATankBase(): hasActed{false}, isAlive{true}
 
 	BorderPath = CreateDefaultSubobject<USplineComponent>("BorderPath");
 	RootComponent = BorderPath;
-	FVector splinePointPosition1{ -24.f,  16.f, 0.f };
-	FVector splinePointPosition2{  26.f,  16.f, 0.f };
-	FVector splinePointPosition3{  26.f, -15.f, 0.f };
-	FVector splinePointPosition4{ -24.f, -15.f, 0.f };
+	//TODO: This values should be calculated from TankTypeData
+	FVector splinePointPosition1{ -25.f,  14.f, 0.f };
+	FVector splinePointPosition2{  25.f,  14.f, 0.f };
+	FVector splinePointPosition3{  25.f, -14.f, 0.f };
+	FVector splinePointPosition4{ -25.f, -14.f, 0.f };
 	BorderPath->ClearSplinePoints(false);
 	BorderPath->AddSplineLocalPoint(splinePointPosition1);
 	BorderPath->SetSplinePointType(0, ESplinePointType::Linear, false);

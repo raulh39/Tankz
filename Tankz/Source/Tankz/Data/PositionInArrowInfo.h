@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Math/Vector.h>
+
 enum class Side
 {
 	Left,
@@ -27,11 +29,10 @@ public:
 
 	void ChangeRotation(bool increment);
 	void ChangeDeltaX(float value);
-	void FlipSides();
+	void ToSide(Side newSide);
 
-	float getDeltaX() const { return currentDeltaX; }
-	float getDeltaY() const { return currentDeltaY; }
-
+	FVector getArrowOffset() { return FVector(currentDeltaX, currentDeltaY, 0); }
+	FRotator getRotation();
 private:
 	struct BoundsInfo {
 		float maxDeltaX; //Max offset of tank along arrow's tail
@@ -65,17 +66,39 @@ private:
 	}
 };
 
+inline PositionInArrowInfo::PositionInArrowInfo():
+	currentRotation(Facing::Front),
+	currentSide(Side::Right)
+{
+	//TODO: This values should be calculated from TankTypeData
+	constexpr float arrowTailXSize = 96.f;
+	constexpr float arrowTailYSize = 6.f;
+	constexpr float tankXSize = 50.f;
+	constexpr float tankYSize = 28.f;
+
+	parallelBounds.minDeltaX = tankXSize/2.f;
+	parallelBounds.maxDeltaX = arrowTailXSize - tankXSize/2.f;
+	parallelBounds.deltaY = arrowTailYSize + tankYSize/2.f;
+
+	perpendicularBounds.minDeltaX = tankYSize/2.f;
+	perpendicularBounds.maxDeltaX = arrowTailXSize - tankYSize/2.f;
+	perpendicularBounds.deltaY = arrowTailYSize + tankXSize/2.f;
+
+	currentDeltaX=parallelBounds.maxDeltaX;
+	recalculateDeltaY();
+}
+
 inline void PositionInArrowInfo::ChangeDeltaX(float value)
 {
 	currentDeltaX += value;
 	clampDeltaX();
 }
 
-inline void PositionInArrowInfo::FlipSides()
+inline void PositionInArrowInfo::ToSide(Side newSide)
 {
+	if(currentSide == newSide) return;
 	currentDeltaY *= -1;
-	if(currentSide == Side::Left) currentSide = Side::Right;
-	else currentSide = Side::Left;
+	currentSide = newSide;
 }
 
 inline void PositionInArrowInfo::ChangeRotation(bool increment)
@@ -101,4 +124,19 @@ inline void PositionInArrowInfo::ChangeRotation(bool increment)
 	}
 	clampDeltaX();
 	recalculateDeltaY();
+}
+
+inline FRotator PositionInArrowInfo::getRotation()
+{
+	switch(currentRotation) {
+		case Facing::Front:
+			return FRotator(0.f, 0.f, 0.f);
+		case Facing::Right:
+			return FRotator(0.f, 90.f, 0.f);
+		case Facing::Back:
+			return FRotator(0.f, 180.f, 0.f);
+		case Facing::Left:
+			return FRotator(0.f, 270.f, 0.f);
+	}
+	return FRotator(0.f, 0.f, 0.f); //Make the compiler happy
 }

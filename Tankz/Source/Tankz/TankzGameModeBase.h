@@ -59,11 +59,7 @@ private:
 	AArrow* arrow;
 	float positionInSplineBorderOfArrowBase;
 	FRotator arrowRotation;
-	float tankPositionInArrowXoffset;
-	float tankPositionInArrowYoffset;
-	static constexpr float maxTankPositionInArrowXoffset = 71;
-	static constexpr float minTankPositionInArrowXoffset = 28;
-
+	PositionInArrowInfo positionInArrowInfo;
 public:
 	//Functions used by states in transtitions:
 	virtual void AdjustArrowBase(const EvMove&)                            override;
