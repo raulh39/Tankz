@@ -46,10 +46,10 @@ void ATankzPlayerController::PhaseChange(TankzPhase newPhase)
 {
 	switch(newPhase) {
 	case TankzPhase_Moving:
-		dialogueHUD->PhaseText = TEXT("Moving");
+		dialogueHUD->PhaseText = TEXT("Movement");
 		break;
 	case TankzPhase_Attacking:
-		dialogueHUD->PhaseText = TEXT("Attacking");
+		dialogueHUD->PhaseText = TEXT("Shooting");
 		break;
 	case TankzPhase_Command:
 		dialogueHUD->PhaseText = TEXT("Command");
