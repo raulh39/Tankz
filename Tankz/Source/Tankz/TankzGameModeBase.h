@@ -52,6 +52,11 @@ private:
 	*/
 	std::vector<ATankBase*> ActingTanks;
 	std::vector<ATankBase*>::size_type SelectedTank;
+	/*
+	 * This will hold the group of tanks that the selected tank can fire to
+	*/
+	std::vector<ATankBase*> ObjectiveTanks;
+	std::vector<ATankBase*>::size_type SelectedObjectiveTank;
 
 	std::tuple<int32, bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);
@@ -60,6 +65,7 @@ private:
 	float positionInSplineBorderOfArrowBase;
 	FRotator arrowRotation;
 	PositionInArrowInfo positionInArrowInfo;
+	bool currentPlayerIsAttacker;
 public:
 	//Functions used by states in transtitions:
 	virtual void AdjustArrowBase(const EvMove&)                            override;

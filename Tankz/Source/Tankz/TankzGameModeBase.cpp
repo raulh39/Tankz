@@ -132,18 +132,22 @@ void ATankzGameModeBase::CalculateNextGroup()
 
 	if (!defendersCanAct) {
 		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
+		currentPlayerIsAttacker = true;
 		return;
 	}
 	if (!attackersCanAct) {
 		SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
+		currentPlayerIsAttacker = false;
 		return;
 	}
 	if ((GameState->CurrentPhase == TankzPhase_Attacking && attackersFirstInitiative >= defendersFirstInitiative) ||
 		(GameState->CurrentPhase != TankzPhase_Attacking && attackersFirstInitiative < defendersFirstInitiative)) {
 		SetActingTanksToAllTanksWithInitiative(attackersFirstInitiative, GameState->Attackers);
+		currentPlayerIsAttacker = true;
 		return;
 	}
 	SetActingTanksToAllTanksWithInitiative(defendersFirstInitiative, GameState->Defenders);
+	currentPlayerIsAttacker = false;
 }
 
 std::tuple<int32, bool> ATankzGameModeBase::getFirstInitiative(TArray<ATankBase*> tanks) const
@@ -379,14 +383,26 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 	OnPhaseChange.Broadcast(ev.newPhase);
 }
 
-
 //----------------------------------------------------------------------
-// FSM Functions TBD
+// FSM Functions for attack phase
 //----------------------------------------------------------------------
 void ATankzGameModeBase::SelectObjectivesGroup()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
+	ObjectiveTanks.clear();
+	SelectedObjectiveTank = 0;
+	if(currentPlayerIsAttacker) {
+		for(auto a: GameState->Attackers) //TODO: check tank is visible
+			ObjectiveTanks.push_back(a);
+	} else {
+		for(auto a: GameState->Defenders)
+			ObjectiveTanks.push_back(a);
+	}
 }
+
+//----------------------------------------------------------------------
+// FSM Functions TBD
+//----------------------------------------------------------------------
 
 void ATankzGameModeBase::UnselectObjectivesGroup()
 {
