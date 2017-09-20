@@ -400,6 +400,19 @@ void ATankzGameModeBase::SelectObjectivesGroup()
 	}
 }
 
+void ATankzGameModeBase::IncSelectedObjective(const EvCycle&ev)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedObjective()"));
+}
+void ATankzGameModeBase::HighlightSelectedObjective()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
+}
+void ATankzGameModeBase::UnhighlightSelectedObjective()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedObjective()"));
+}
+
 //----------------------------------------------------------------------
 // FSM Functions TBD
 //----------------------------------------------------------------------
@@ -425,25 +438,13 @@ void ATankzGameModeBase::IncSelectedAction(const EvCycle&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedAction()"));
 }
-void ATankzGameModeBase::IncSelectedObjective(const EvCycle&)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedObjective()"));
-}
 void ATankzGameModeBase::HighlightSelectedAction()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedAction()"));
 }
-void ATankzGameModeBase::HighlightSelectedObjective()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
-}
 void ATankzGameModeBase::UnhighlightSelectedAction()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedAction()"));
-}
-void ATankzGameModeBase::UnhighlightSelectedObjective()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedObjective()"));
 }
 
 bool ATankzGameModeBase::ASideHasWon()
