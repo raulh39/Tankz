@@ -9,6 +9,7 @@
 #include <vector>
 #include "FSM/States.h"
 #include "TankzGameState.h"
+#include "Actors/CrosshairBase.h"
 
 #include "TankzGameModeBase.generated.h"
 
@@ -53,10 +54,12 @@ private:
 	std::vector<ATankBase*> ActingTanks;
 	std::vector<ATankBase*>::size_type SelectedTank;
 	/*
-	 * This will hold the group of tanks that the selected tank can fire to
+	 * This will hold the group of crosshairs (placed atop tanks) that the selected tank can fire to
 	*/
-	std::vector<ATankBase*> ObjectiveTanks;
-	std::vector<ATankBase*>::size_type SelectedObjectiveTank;
+	std::vector<ACrosshairBase*> ObjectiveCrosshairs;
+	std::vector<ACrosshairBase*>::size_type SelectedObjectiveCrosshair;
+	ACrosshairBase *SpawnCrossHair(ATankBase *tank);
+	TSubclassOf<ACrosshairBase> CrosshairType;
 
 	std::tuple<int32, bool> getFirstInitiative(TArray<ATankBase*> tanks) const;
 	void SetActingTanksToAllTanksWithInitiative(int32 initiative, TArray<ATankBase*> tanks);

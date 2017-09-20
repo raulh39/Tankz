@@ -9,6 +9,10 @@
 
 ATankzGameModeBase::ATankzGameModeBase(): terminating(false)
 {
+	CrosshairType = LoadClass < ACrosshairBase > (NULL, TEXT("Blueprint'/Game/ActorsBP/CrosshairBP.CrosshairBP_C'"), NULL, LOAD_None, NULL);
+    if (!CrosshairType) {
+		UE_LOG(LogTemp, Error, TEXT("CrosshairBP.CrosshairBP not found"));
+	}
 }
 
 ATankzGameModeBase::~ATankzGameModeBase()
@@ -389,15 +393,23 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 void ATankzGameModeBase::SelectObjectivesGroup()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
-	ObjectiveTanks.clear();
-	SelectedObjectiveTank = 0;
-	if(currentPlayerIsAttacker) {
+	ObjectiveCrosshairs.clear();
+	SelectedObjectiveCrosshair = 0;
+	if(!currentPlayerIsAttacker) {
 		for(auto a: GameState->Attackers) //TODO: check tank is visible
-			ObjectiveTanks.push_back(a);
+			ObjectiveCrosshairs.push_back(SpawnCrossHair(a));
 	} else {
 		for(auto a: GameState->Defenders)
-			ObjectiveTanks.push_back(a);
+			ObjectiveCrosshairs.push_back(SpawnCrossHair(a));
 	}
+}
+
+ACrosshairBase *ATankzGameModeBase::SpawnCrossHair(ATankBase *tank)
+{
+	FVector translation{ tank->GetActorLocation() };
+	translation.Z = 30.f;
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SpawnCrossHair()"));
+	return GetWorld()->SpawnActor<ACrosshairBase>(CrosshairType, translation, FRotator::ZeroRotator);
 }
 
 void ATankzGameModeBase::IncSelectedObjective(const EvCycle&ev)
