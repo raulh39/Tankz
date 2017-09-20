@@ -415,14 +415,32 @@ ACrosshairBase *ATankzGameModeBase::SpawnCrossHair(ATankBase *tank)
 void ATankzGameModeBase::IncSelectedObjective(const EvCycle&ev)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedObjective()"));
+
+	if(ev.forward) {
+		++SelectedObjectiveCrosshair;
+		if(SelectedObjectiveCrosshair>=ObjectiveCrosshairs.size()) {
+			SelectedObjectiveCrosshair = 0;
+		}
+	} else {
+		if(SelectedObjectiveCrosshair==0) {
+			SelectedObjectiveCrosshair = ObjectiveCrosshairs.size()-1;
+		} else {
+				--SelectedObjectiveCrosshair;
+		}
+	}
+
 }
 void ATankzGameModeBase::HighlightSelectedObjective()
 {
+	if(terminating) return;
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
+	ObjectiveCrosshairs[SelectedObjectiveCrosshair]->SetSelected(true);
 }
 void ATankzGameModeBase::UnhighlightSelectedObjective()
 {
+	if(terminating) return;
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedObjective()"));
+	ObjectiveCrosshairs[SelectedObjectiveCrosshair]->SetSelected(false);
 }
 
 //----------------------------------------------------------------------
