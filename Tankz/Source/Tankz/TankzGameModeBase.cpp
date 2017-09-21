@@ -356,7 +356,6 @@ bool ATankzGameModeBase::MoreTanksInGroup()
 
 void ATankzGameModeBase::MarkTankHasActed(const EvEsc&)
 {
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::MarkTankHasActed()"));
 	ActingTanks[SelectedTank]->hasActed = true;
 }
 
@@ -393,16 +392,26 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 void ATankzGameModeBase::SelectObjectivesGroup()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::SelectObjectivesGroup()"));
-	ObjectiveCrosshairs.clear();
-	SelectedObjectiveCrosshair = 0;
+	Objectives.clear();
+	SelectedObjective = 0;
 	if(!currentPlayerIsAttacker) {
 		for(auto a: GameState->Attackers) //TODO: check tank is visible
-			ObjectiveCrosshairs.push_back(SpawnCrossHair(a));
+			Objectives.push_back(std::make_pair(a, SpawnCrossHair(a)));
 	} else {
 		for(auto a: GameState->Defenders)
-			ObjectiveCrosshairs.push_back(SpawnCrossHair(a));
+			Objectives.push_back(std::make_pair(a, SpawnCrossHair(a)));
 	}
 }
+
+void ATankzGameModeBase::UnselectObjectivesGroup()
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnselectObjectivesGroup()"));
+	for(auto &a: Objectives) {
+		a.second->Destroy();
+	}
+	Objectives.clear();
+}
+
 
 ACrosshairBase *ATankzGameModeBase::SpawnCrossHair(ATankBase *tank)
 {
@@ -414,48 +423,43 @@ ACrosshairBase *ATankzGameModeBase::SpawnCrossHair(ATankBase *tank)
 
 void ATankzGameModeBase::IncSelectedObjective(const EvCycle&ev)
 {
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedObjective()"));
-
 	if(ev.forward) {
-		++SelectedObjectiveCrosshair;
-		if(SelectedObjectiveCrosshair>=ObjectiveCrosshairs.size()) {
-			SelectedObjectiveCrosshair = 0;
+		++SelectedObjective;
+		if(SelectedObjective>=Objectives.size()) {
+			SelectedObjective = 0;
 		}
 	} else {
-		if(SelectedObjectiveCrosshair==0) {
-			SelectedObjectiveCrosshair = ObjectiveCrosshairs.size()-1;
+		if(SelectedObjective==0) {
+			SelectedObjective = Objectives.size()-1;
 		} else {
-				--SelectedObjectiveCrosshair;
+				--SelectedObjective;
 		}
 	}
 
 }
 void ATankzGameModeBase::HighlightSelectedObjective()
 {
-	if(terminating) return;
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedObjective()"));
-	ObjectiveCrosshairs[SelectedObjectiveCrosshair]->SetSelected(true);
+	if(terminating || Objectives.empty()) return;
+	Objectives[SelectedObjective].second->SetSelected(true);
 }
 void ATankzGameModeBase::UnhighlightSelectedObjective()
 {
-	if(terminating) return;
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedObjective()"));
-	ObjectiveCrosshairs[SelectedObjectiveCrosshair]->SetSelected(false);
+	if(terminating || Objectives.empty()) return;
+	Objectives[SelectedObjective].second->SetSelected(false);
+}
+
+void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AssignDamageAndMarkTankHasActed()"));
+	//TODO: assing damage!!!!
+
+	ActingTanks[SelectedTank]->hasActed = true;
 }
 
 //----------------------------------------------------------------------
 // FSM Functions TBD
 //----------------------------------------------------------------------
 
-void ATankzGameModeBase::UnselectObjectivesGroup()
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnselectObjectivesGroup()"));
-}
-
-void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::AssignDamageAndMarkTankHasActed()"));
-}
 void ATankzGameModeBase::CalculateTankCommandActions(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateTankCommandActions()"));

@@ -56,8 +56,9 @@ private:
 	/*
 	 * This will hold the group of crosshairs (placed atop tanks) that the selected tank can fire to
 	*/
-	std::vector<ACrosshairBase*> ObjectiveCrosshairs;
-	std::vector<ACrosshairBase*>::size_type SelectedObjectiveCrosshair;
+	using ObjectivesContainer_t = std::vector<std::pair<ATankBase*,ACrosshairBase*>>;
+	ObjectivesContainer_t Objectives;
+	ObjectivesContainer_t::size_type SelectedObjective;
 	ACrosshairBase *SpawnCrossHair(ATankBase *tank);
 	TSubclassOf<ACrosshairBase> CrosshairType;
 

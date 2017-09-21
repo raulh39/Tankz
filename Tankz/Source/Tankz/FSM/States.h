@@ -292,8 +292,10 @@ struct ChoosingObjectiveState: public sc::state<ChoosingObjectiveState, FiringGr
 	sc::result react(const EvSelect&evSelect) {
 		context<GameModeStateMachine>().AssignDamageAndMarkTankHasActed(evSelect);
 		bool moreTanksInGroup = context<GameModeStateMachine>().MoreTanksInGroup();
-		if(moreTanksInGroup)
+		if(moreTanksInGroup) {
+			context<GameModeStateMachine>().CalculateNextGroup();
 			return transit<SelectingTankToFireState>();
+		}
 		post_event( EvEndGroup() );
 		return discard_event();
 	}
