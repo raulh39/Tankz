@@ -360,8 +360,10 @@ struct CommandingGroupState: public sc::state<CommandingGroupState, COMMANDState
 
 	sc::result react(const EvEndGroup&) {
 		bool moreTanksToAct = context<GameModeStateMachine>().MoreTanksToAct();
-		if(moreTanksToAct)
+		if(moreTanksToAct) {
+			context<GameModeStateMachine>().CalculateNextGroup();
 			return transit<CommandingGroupState>();
+		}
 		post_event( EvEndPhase(TankzPhase_Moving) ); 
 		return discard_event();
 	}

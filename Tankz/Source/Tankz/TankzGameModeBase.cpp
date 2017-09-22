@@ -387,7 +387,7 @@ void ATankzGameModeBase::SwitchPhase(const EvEndPhase&ev)
 }
 
 //----------------------------------------------------------------------
-// FSM Functions for attack phase
+// FSM Functions for ATTACK phase
 //----------------------------------------------------------------------
 void ATankzGameModeBase::SelectObjectivesGroup()
 {
@@ -457,28 +457,31 @@ void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
 }
 
 //----------------------------------------------------------------------
-// FSM Functions TBD
+// FSM Functions for COMMAND phase
 //----------------------------------------------------------------------
-
 void ATankzGameModeBase::CalculateTankCommandActions(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateTankCommandActions()"));
 }
-void ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed()"));
-}
-void ATankzGameModeBase::IncSelectedAction(const EvCycle&)
-{
-	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedAction()"));
-}
+
 void ATankzGameModeBase::HighlightSelectedAction()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedAction()"));
 }
+
 void ATankzGameModeBase::UnhighlightSelectedAction()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedAction()"));
+}
+
+void ATankzGameModeBase::IncSelectedAction(const EvCycle&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedAction()"));
+}
+
+void ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed()"));
 }
 
 bool ATankzGameModeBase::ASideHasWon()
