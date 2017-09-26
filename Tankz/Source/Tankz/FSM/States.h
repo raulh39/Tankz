@@ -407,8 +407,10 @@ struct SelectActionForTankState: public sc::state<SelectActionForTankState, Comm
 	sc::result react(const EvSelect&evSelect) {
 		context<GameModeStateMachine>().ExecuteSelectedActionAndMarkTankHasActed(evSelect);
 		bool moreTanksInGroup = context<GameModeStateMachine>().MoreTanksInGroup();
-		if(moreTanksInGroup)
+		if(moreTanksInGroup) {
+			context<GameModeStateMachine>().CalculateNextGroup();
 			return transit<SelectingTankToCommandState>();
+		}
 		post_event( EvEndGroup() );
 		return discard_event();
 	}

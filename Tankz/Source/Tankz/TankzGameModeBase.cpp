@@ -503,6 +503,10 @@ void ATankzGameModeBase::IncSelectedAction(const EvCycle&ev)
 void ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed()"));
+	//TODO: Execute selectedAction
+	currentTankActions.Empty();
+	OnUpdatedActionList.Broadcast(currentTankActions);
+	ActingTanks[SelectedTank]->hasActed = true;
 }
 
 bool ATankzGameModeBase::ASideHasWon()
