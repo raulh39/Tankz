@@ -38,6 +38,12 @@ public:
 	UFUNCTION()
 	void PhaseChange(TankzPhase newPhase);
 
+	UFUNCTION()
+	void SetActionList(TArray<FString> actionList);
+
+	UFUNCTION()
+	void HighlightAction(int actionNum, bool activated);
+
 protected:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;

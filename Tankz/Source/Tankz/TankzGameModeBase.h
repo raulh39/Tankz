@@ -17,6 +17,8 @@ class ATankzGameState;
 class AArrow;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPhaseChange, TankzPhase, newPhase);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdatedActionList, TArray<FString>, newActions);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHighlightAction, int, actionNum, bool, activated);
 
 /**
  * 
@@ -33,12 +35,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FTankTypeData> TankTypes;
 
-
 	FOnPhaseChange OnPhaseChange;
+	FOnUpdatedActionList OnUpdatedActionList;
+	FOnHighlightAction OnHighlightAction;
 	
 private:
-	
-
 	bool terminating;
 	ATankzGameState * GameState;
 	FTankzMapData LoadJson();
@@ -70,6 +71,9 @@ private:
 	FRotator arrowRotation;
 	PositionInArrowInfo positionInArrowInfo;
 	bool currentPlayerIsAttacker;
+
+	TArray<FString> currentTankActions;
+	int selectedAction;
 public:
 	//Functions used by states in transtitions:
 	virtual void AdjustArrowBase(const EvMove&)                            override;

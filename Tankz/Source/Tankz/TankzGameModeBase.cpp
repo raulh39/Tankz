@@ -462,21 +462,41 @@ void ATankzGameModeBase::AssignDamageAndMarkTankHasActed(const EvSelect&)
 void ATankzGameModeBase::CalculateTankCommandActions(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateTankCommandActions()"));
+	currentTankActions.Empty();
+	currentTankActions.Add("one");
+	currentTankActions.Add("two");
+	selectedAction=0;
+	OnUpdatedActionList.Broadcast(currentTankActions);
 }
 
 void ATankzGameModeBase::HighlightSelectedAction()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::HighlightSelectedAction()"));
+	OnHighlightAction.Broadcast(selectedAction, true);
 }
 
 void ATankzGameModeBase::UnhighlightSelectedAction()
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::UnhighlightSelectedAction()"));
+	OnHighlightAction.Broadcast(selectedAction, false);
 }
 
-void ATankzGameModeBase::IncSelectedAction(const EvCycle&)
+void ATankzGameModeBase::IncSelectedAction(const EvCycle&ev)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::IncSelectedAction()"));
+	if(ev.forward) {
+		++selectedAction;
+		if(selectedAction>=currentTankActions.Num()) {
+			selectedAction = 0;
+		}
+	} else {
+		if(selectedAction==0) {
+			selectedAction = currentTankActions.Num()-1;
+		} else {
+				--selectedAction;
+		}
+	}
+
 }
 
 void ATankzGameModeBase::ExecuteSelectedActionAndMarkTankHasActed(const EvSelect&)

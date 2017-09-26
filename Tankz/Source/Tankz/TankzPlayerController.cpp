@@ -40,6 +40,8 @@ void ATankzPlayerController::BeginPlay()
 		}
 	}
 	gameMode->OnPhaseChange.AddDynamic(this, &ATankzPlayerController::PhaseChange);
+	gameMode->OnUpdatedActionList.AddDynamic(this, &ATankzPlayerController::SetActionList);
+	gameMode->OnHighlightAction.AddDynamic(this, &ATankzPlayerController::HighlightAction);
 }
 
 void ATankzPlayerController::PhaseChange(TankzPhase newPhase)
@@ -172,4 +174,14 @@ void ATankzPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MoveUp", this, &ATankzPlayerController::OnMoveUp);
 	InputComponent->BindAxis("PanX", this, &ATankzPlayerController::OnPanX);
 	InputComponent->BindAxis("PanY", this, &ATankzPlayerController::OnPanY);
+}
+
+void ATankzPlayerController::SetActionList(TArray<FString> actionList)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzPlayerController::SetActionList"));
+}
+
+void ATankzPlayerController::HighlightAction(int actionNum, bool activated)
+{
+	UE_LOG(LogTemp, Log, TEXT("ATankzPlayerController::HighlightAction(%d, %d)"), actionNum, activated);
 }
