@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/DefaultPawn.h"
 #include "TankzGameState.h"
+#include "ActionElementWidgetBase.h"
+#include <vector>
 
 #include "TankzPlayerController.generated.h"
 
@@ -49,7 +51,10 @@ protected:
 	virtual void BeginPlay() override;
 private:
 	UInplayUserWidgetBase* dialogueHUD;
+	TSubclassOf<UActionElementWidgetBase> actionElementWidgetBase;
 	ATankzGameModeBase *gameMode;
 	bool floatMode;
 	ADefaultPawn* pawn;
+	std::vector<UActionElementWidgetBase*> tankActions;
+	UActionElementWidgetBase* CreateAction(FString actionName);
 };

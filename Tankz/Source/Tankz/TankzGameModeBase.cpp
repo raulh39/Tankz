@@ -463,8 +463,9 @@ void ATankzGameModeBase::CalculateTankCommandActions(const EvSelect&)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzGameModeBase::CalculateTankCommandActions()"));
 	currentTankActions.Empty();
-	currentTankActions.Add("one");
-	currentTankActions.Add("two");
+	currentTankActions.Add("one action");
+	currentTankActions.Add("other");
+	currentTankActions.Add("third action");
 	selectedAction=0;
 	OnUpdatedActionList.Broadcast(currentTankActions);
 }

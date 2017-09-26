@@ -17,4 +17,7 @@ class TANKZ_API UActionElementWidgetBase : public UUserWidget
 public:	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tankz")
 	void SetHighlight(bool activate);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Tankz")
+	void SetText(const FString& text);
 };

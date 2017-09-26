@@ -5,16 +5,18 @@
 #include "TankzGameModeBase.h"
 #include "TankzGameState.h"
 #include "InplayUserWidgetBase.h"
+#include "PanelWidget.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
 
 ATankzPlayerController::ATankzPlayerController(): floatMode(false)
 {
+	{
 	auto u = LoadObject<UBlueprint>(nullptr, TEXT("/Game/InPlayWidgetBP.InPlayWidgetBP"));
 	if(u == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("UUserWidget NOT found"));
+		UE_LOG(LogTemp, Error, TEXT("InPlayWidgetBP NOT found"));
 	} else {
-		UE_LOG(LogTemp, Log, TEXT("UUserWidget found"));
+		UE_LOG(LogTemp, Log, TEXT("InPlayWidgetBP found"));
 		dialogueHUD = CreateWidget<UInplayUserWidgetBase>(GetWorld(), u->GeneratedClass);
 		if(dialogueHUD) {
 			UE_LOG(LogTemp, Log, TEXT("UInplayUserWidgetBase created"));
@@ -23,6 +25,17 @@ ATankzPlayerController::ATankzPlayerController(): floatMode(false)
 		} else {
 			UE_LOG(LogTemp, Error, TEXT("UInplayUserWidgetBase NOT created"));
 		}
+	}
+	}
+
+	{
+	auto actionItemBP = LoadObject<UBlueprint>(nullptr, TEXT("/Game/ActionElementWidgetBP.ActionElementWidgetBP"));
+	if(actionItemBP == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("ActionElementWidgetBP NOT found"));
+	} else {
+		UE_LOG(LogTemp, Log, TEXT("ActionElementWidgetBP found"));
+		actionElementWidgetBase = actionItemBP->GeneratedClass;
+	}
 	}
 }
 
@@ -179,9 +192,26 @@ void ATankzPlayerController::SetupInputComponent()
 void ATankzPlayerController::SetActionList(TArray<FString> actionList)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzPlayerController::SetActionList"));
+	auto actionsListPW = dialogueHUD->ActionsListPW();
+	actionsListPW->ClearChildren();
+	tankActions.clear();
+	for(auto tankAction: actionList) {
+		auto actionElement = CreateAction(tankAction);
+		tankActions.push_back(actionElement);
+		actionsListPW->AddChild(actionElement);
+	}
 }
 
 void ATankzPlayerController::HighlightAction(int actionNum, bool activated)
 {
 	UE_LOG(LogTemp, Log, TEXT("ATankzPlayerController::HighlightAction(%d, %d)"), actionNum, activated);
+	tankActions[actionNum]->SetHighlight(activated);
+}
+
+UActionElementWidgetBase* ATankzPlayerController::CreateAction(FString actionName)
+{
+	auto actionElement = CreateWidget<UActionElementWidgetBase>(GetWorld(), actionElementWidgetBase);
+	actionElement->SetHighlight(false);
+	actionElement->SetText(actionName);
+	return actionElement;
 }
