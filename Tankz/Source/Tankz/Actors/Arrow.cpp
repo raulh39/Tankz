@@ -11,7 +11,7 @@ AArrow::AArrow()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("ArrowMeshComponent");
 	RootComponent = Mesh;
-	auto MeshAsset =  ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/Arrow.Arrow'"));
+	auto MeshAsset =  ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/MeshesAndTextures/Tokens/Arrow.Arrow'"));
 	if (MeshAsset.Object != nullptr) {
 		Mesh->SetStaticMesh(MeshAsset.Object);
 	}
